@@ -3,11 +3,12 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Valtieri</title>
+<title>Valtieri | The Art of Time</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Inter:wght@200;300;400&display=swap" rel="stylesheet">
 
 <style>
+/* CORE STYLES */
 * {
   margin: 0;
   padding: 0;
@@ -15,12 +16,13 @@
 }
 
 body {
-  background: #0b0b0d;
-  color: #f5f5f5;
+  background: #000000; /* Deep black for luxury feel */
+  color: #ffffff;
   font-family: 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* NAVIGATION */
+/* PROFESSIONAL NAVIGATION */
 nav {
   position: fixed;
   width: 100%;
@@ -29,29 +31,44 @@ nav {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 40px;
+  padding: 30px 50px;
   z-index: 1000;
-  background: rgba(0,0,0,0.3);
-  backdrop-filter: blur(8px);
+  background: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%);
 }
 
 .logo {
   font-family: 'Playfair Display', serif;
-  font-size: 24px;
-  letter-spacing: 2px;
+  font-size: 22px;
+  letter-spacing: 5px;
+  font-weight: 400;
+  text-transform: uppercase;
 }
 
 .nav-icons {
   display: flex;
-  gap: 25px;
-  font-size: 18px;
-  cursor: pointer;
+  gap: 30px;
+  align-items: center;
 }
 
-/* HERO */
+.nav-icons svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: white;
+  stroke-width: 1.5;
+  cursor: pointer;
+  transition: opacity 0.3s;
+}
+
+.nav-icons svg:hover {
+  opacity: 0.6;
+}
+
+/* HERO VIDEO */
 .hero {
   position: relative;
   height: 100vh;
+  width: 100%;
   overflow: hidden;
 }
 
@@ -61,78 +78,96 @@ nav {
   object-fit: cover;
 }
 
-.hero-overlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(0,0,0,0.45);
-  display: flex;
-  justify-content: center;
-  align-items: center;
+/* THE "GAP" FIX - TRANSITION QUOTE */
+.transition-quote {
+  padding: 140px 20px;
   text-align: center;
-  padding: 20px;
+  background: #000;
 }
 
-.hero-text {
+.transition-quote h2 {
   font-family: 'Playfair Display', serif;
-  font-size: 36px;
-  max-width: 800px;
-  line-height: 1.4;
+  font-size: clamp(28px, 5vw, 42px);
+  font-weight: 400;
+  line-height: 1.5;
+  font-style: italic;
+  max-width: 900px;
+  margin: 0 auto;
+  letter-spacing: -0.5px;
 }
 
-/* PRODUCTS */
+/* PRODUCTS GRID */
 .section {
-  padding: 100px 60px;
+  padding: 60px 50px 120px 50px;
 }
 
 .products-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 40px;
+  gap: 20px; /* Tighter gaps for a gallery look */
 }
 
 .product-card {
   text-align: center;
-  transition: transform 0.4s ease;
+  text-decoration: none;
+  color: white;
+}
+
+.product-image-wrapper {
+  overflow: hidden;
+  background: #111;
+  margin-bottom: 20px;
 }
 
 .product-card img {
   width: 100%;
-  height: 380px;
-  object-fit: cover;
+  height: auto;
+  display: block;
+  transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
-.product-card:hover {
-  transform: scale(1.03);
+.product-card:hover img {
+  transform: scale(1.05);
 }
 
 .product-name {
-  margin-top: 15px;
-  font-size: 16px;
-  letter-spacing: 1px;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-weight: 300;
+  opacity: 0.8;
 }
 
-.product-price {
-  margin-top: 5px;
-  color: #bfa46f;
-}
-
-/* QUOTE */
-.quote-section {
-  padding: 120px 40px;
+/* MIDDLE QUOTE SECTION */
+.mid-quote {
+  padding: 100px 20px;
   text-align: center;
+  border-top: 1px solid #222;
+  border-bottom: 1px solid #222;
+  margin: 0 50px;
+}
+
+.mid-quote p {
   font-family: 'Playfair Display', serif;
-  font-size: 32px;
-  max-width: 900px;
-  margin: auto;
-  line-height: 1.6;
+  font-size: 24px;
+  letter-spacing: 1px;
 }
 
 /* FOOTER */
 footer {
-  padding: 60px;
+  padding: 80px 20px;
   text-align: center;
-  font-size: 14px;
-  opacity: 0.6;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  opacity: 0.4;
+}
+
+/* MOBILE RESPONSIVE */
+@media (max-width: 900px) {
+  .products-grid { grid-template-columns: repeat(2, 1fr); }
+  nav { padding: 20px; }
+  .section { padding: 40px 20px; }
 }
 </style>
 </head>
@@ -141,9 +176,9 @@ footer {
 <nav>
   <div class="logo">VALTIERI</div>
   <div class="nav-icons">
-    🔍
-    🛍
-    ☰
+    <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+    <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+    <svg viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
   </div>
 </nav>
 
@@ -151,65 +186,54 @@ footer {
   <video autoplay muted loop playsinline>
     <source src="https://f003.backblazeb2.com/file/shopAsset/hailuo_1771833181.mp4" type="video/mp4">
   </video>
-  <div class="hero-overlay">
-    <div class="hero-text">
-      Style is measured in details.<br>
-      Time is revealed in silence.
-    </div>
-  </div>
+</section>
+
+<section class="transition-quote">
+  <h2>Style is measured in details.<br>Time is revealed in silence.</h2>
 </section>
 
 <section class="section">
   <div class="products-grid">
     <div class="product-card">
-      <img src="https://shopAsset.s3.eu-central-003.backblazeb2.com/image-1_744134.jpg">
+      <div class="product-image-wrapper"><img src="https://shopAsset.s3.eu-central-003.backblazeb2.com/image-1_744134.jpg"></div>
       <div class="product-name">Valtieri Chrono I</div>
-      <div class="product-price">€299</div>
     </div>
     <div class="product-card">
-      <img src="https://shopAsset.s3.eu-central-003.backblazeb2.com/image-1_82cc31.jpg">
+      <div class="product-image-wrapper"><img src="https://shopAsset.s3.eu-central-003.backblazeb2.com/image-1_82cc31.jpg"></div>
       <div class="product-name">Valtieri Chrono II</div>
-      <div class="product-price">€299</div>
     </div>
     <div class="product-card">
-      <img src="https://shopAsset.s3.eu-central-003.backblazeb2.com/image-1_b2f631.jpg">
+      <div class="product-image-wrapper"><img src="https://shopAsset.s3.eu-central-003.backblazeb2.com/image-1_b2f631.jpg"></div>
       <div class="product-name">Valtieri Classic</div>
-      <div class="product-price">€299</div>
     </div>
     <div class="product-card">
-      <img src="https://shopAsset.s3.eu-central-003.backblazeb2.com/image_b78b2c.jpg">
+      <div class="product-image-wrapper"><img src="https://shopAsset.s3.eu-central-003.backblazeb2.com/image_b78b2c.jpg"></div>
       <div class="product-name">Valtieri Signature</div>
-      <div class="product-price">€299</div>
     </div>
   </div>
 </section>
 
-<section class="quote-section">
-  Craftsmanship is not displayed.<br>
-  It is understood.
+<section class="mid-quote">
+  <p>Craftsmanship is not displayed. It is understood.</p>
 </section>
 
 <section class="section">
   <div class="products-grid">
     <div class="product-card">
-      <img src="https://shopAsset.s3.eu-central-003.backblazeb2.com/image.jpg">
+      <div class="product-image-wrapper"><img src="https://shopAsset.s3.eu-central-003.backblazeb2.com/image.jpg"></div>
       <div class="product-name">Valtieri Nero</div>
-      <div class="product-price">€299</div>
     </div>
     <div class="product-card">
-      <img src="https://shopAsset.s3.eu-central-003.backblazeb2.com/image-1.jpg">
+      <div class="product-image-wrapper"><img src="https://shopAsset.s3.eu-central-003.backblazeb2.com/image-1.jpg"></div>
       <div class="product-name">Valtieri Oro</div>
-      <div class="product-price">€299</div>
     </div>
     <div class="product-card">
-      <img src="https://shopAsset.s3.eu-central-003.backblazeb2.com/image-1_9916e3.jpg">
+      <div class="product-image-wrapper"><img src="https://shopAsset.s3.eu-central-003.backblazeb2.com/image-1_9916e3.jpg"></div>
       <div class="product-name">Valtieri Edition X</div>
-      <div class="product-price">€299</div>
     </div>
     <div class="product-card">
-      <img src="https://shopAsset.s3.eu-central-003.backblazeb2.com/image-1_6409c9.jpg">
+      <div class="product-image-wrapper"><img src="https://shopAsset.s3.eu-central-003.backblazeb2.com/image-1_6409c9.jpg"></div>
       <div class="product-name">Valtieri Minimal</div>
-      <div class="product-price">€299</div>
     </div>
   </div>
 </section>
@@ -219,4 +243,4 @@ footer {
 </footer>
 
 </body>
-	</html>
+</html>
