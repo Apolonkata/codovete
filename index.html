@@ -2,27 +2,37 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Valtieri | The Art of Time</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+<title>MOGCHECK — The Ultimate Face Symmetry Battlegrounds</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Inter:wght@200;300;400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 
 <style>
-/* CORE STYLES */
+/* CORE LUXURY DESIGN */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
+:root {
+  --gold: #c8a97e;
+  --gold-dim: #7a6344;
+  --bg: #000000;
+  --bg-card: #0a0a0a;
+  --border: #161616;
+  --text-muted: #666666;
+}
+
 body {
-  background: #000000; /* Deep black for luxury feel */
+  background: var(--bg);
   color: #ffffff;
   font-family: 'Inter', sans-serif;
   -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
 }
 
-/* PROFESSIONAL NAVIGATION */
+/* PREMIUM FIXED NAVIGATION */
 nav {
   position: fixed;
   width: 100%;
@@ -31,216 +41,124 @@ nav {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 30px 50px;
-  z-index: 1000;
-  background: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%);
+  padding: 24px 40px;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
+  backdrop-filter: blur(10px);
+  z-index: 100;
+  border-bottom: 1px solid rgba(22, 22, 22, 0.5);
 }
 
 .logo {
-  font-family: 'Playfair Display', serif;
-  font-size: 22px;
-  letter-spacing: 5px;
-  font-weight: 400;
-  text-transform: uppercase;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 32px;
+  letter-spacing: 4px;
+  color: #ffffff;
 }
 
-.nav-icons {
+.logo em {
+  color: var(--gold);
+  font-style: normal;
+}
+
+.nav-links {
   display: flex;
   gap: 30px;
-  align-items: center;
 }
 
-.nav-icons svg {
-  width: 20px;
-  height: 20px;
-  fill: none;
-  stroke: white;
-  stroke-width: 1.5;
-  cursor: pointer;
-  transition: opacity 0.3s;
-}
-
-.nav-icons svg:hover {
-  opacity: 0.6;
-}
-
-/* HERO VIDEO */
-.hero {
-  position: relative;
-  height: 100vh;
-  width: 100%;
-  overflow: hidden;
-}
-
-.hero video {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-/* THE "GAP" FIX - TRANSITION QUOTE */
-.transition-quote {
-  padding: 140px 20px;
-  text-align: center;
-  background: #000;
-}
-
-.transition-quote h2 {
-  font-family: 'Playfair Display', serif;
-  font-size: clamp(28px, 5vw, 42px);
-  font-weight: 400;
-  line-height: 1.5;
-  font-style: italic;
-  max-width: 900px;
-  margin: 0 auto;
-  letter-spacing: -0.5px;
-}
-
-/* PRODUCTS GRID */
-.section {
-  padding: 60px 50px 120px 50px;
-}
-
-.products-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 20px; /* Tighter gaps for a gallery look */
-}
-
-.product-card {
-  text-align: center;
+.nav-links a {
+  color: var(--text-muted);
   text-decoration: none;
-  color: white;
-}
-
-.product-image-wrapper {
-  overflow: hidden;
-  background: #111;
-  margin-bottom: 20px;
-}
-
-.product-card img {
-  width: 100%;
-  height: auto;
-  display: block;
-  transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
-}
-
-.product-card:hover img {
-  transform: scale(1.05);
-}
-
-.product-name {
-  font-size: 13px;
-  text-transform: uppercase;
+  font-size: 12px;
   letter-spacing: 2px;
-  font-weight: 300;
-  opacity: 0.8;
+  text-transform: uppercase;
+  transition: color 0.3s;
 }
 
-/* MIDDLE QUOTE SECTION */
-.mid-quote {
-  padding: 100px 20px;
+.nav-links a:hover, .nav-links a.active {
+  color: var(--gold);
+}
+
+/* HERO SECTION */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   text-align: center;
-  border-top: 1px solid #222;
-  border-bottom: 1px solid #222;
-  margin: 0 50px;
+  padding: 120px 20px 60px;
+  position: relative;
 }
 
-.mid-quote p {
-  font-family: 'Playfair Display', serif;
-  font-size: 24px;
-  letter-spacing: 1px;
+/* Subtle gold ambient glow in background */
+.hero::before {
+  content: '';
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  background: var(--gold);
+  opacity: 0.03;
+  filter: blur(120px);
+  top: 35%;
+  pointer-events: none;
 }
 
-/* FOOTER */
-footer {
-  padding: 80px 20px;
-  text-align: center;
+.hero-eyebrow {
   font-size: 11px;
-  letter-spacing: 2px;
+  letter-spacing: 6px;
   text-transform: uppercase;
-  opacity: 0.4;
+  color: var(--gold);
+  margin-bottom: 16px;
 }
 
-/* MOBILE RESPONSIVE */
-@media (max-width: 900px) {
-  .products-grid { grid-template-columns: repeat(2, 1fr); }
+.hero-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 90px;
+  letter-spacing: 8px;
+  line-height: 0.95;
+  text-transform: uppercase;
+  margin-bottom: 24px;
+}
+
+@media(max-width: 768px) {
+  .hero-title { font-size: 60px; }
   nav { padding: 20px; }
-  .section { padding: 40px 20px; }
+  .nav-links { display: none; } /* Clean layout for mobile testing */
 }
-</style>
-</head>
-<body>
 
-<nav>
-  <div class="logo">VALTIERI</div>
-  <div class="nav-icons">
-    <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-    <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
-    <svg viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
-  </div>
-</nav>
+.hero-subtitle {
+  font-size: 16px;
+  font-weight: 300;
+  color: #888;
+  max-width: 500px;
+  line-height: 1.6;
+  margin-bottom: 40px;
+}
 
-<section class="hero">
-  <video autoplay muted loop playsinline>
-    <source src="https://f003.backblazeb2.com/file/shopAsset/hailuo_1771833181.mp4" type="video/mp4">
-  </video>
-</section>
+/* INTERACTIVE CTA BUTTON */
+.cta-btn {
+  background: transparent;
+  color: var(--gold);
+  border: 1px solid var(--gold);
+  padding: 18px 44px;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 24px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.3s ease;
+}
 
-<section class="transition-quote">
-  <h2>Style is measured in details.<br>Time is revealed in silence.</h2>
-</section>
+.cta-btn:hover {
+  background: var(--gold);
+  color: #000000;
+  box-shadow: 0 0 30px rgba(200, 169, 126, 0.2);
+}
 
-<section class="section">
-  <div class="products-grid">
-    <div class="product-card">
-      <div class="product-image-wrapper"><img src="https://shopAsset.s3.eu-central-003.backblazeb2.com/image-1_744134.jpg"></div>
-      <div class="product-name">Valtieri Chrono I</div>
-    </div>
-    <div class="product-card">
-      <div class="product-image-wrapper"><img src="https://shopAsset.s3.eu-central-003.backblazeb2.com/image-1_82cc31.jpg"></div>
-      <div class="product-name">Valtieri Chrono II</div>
-    </div>
-    <div class="product-card">
-      <div class="product-image-wrapper"><img src="https://shopAsset.s3.eu-central-003.backblazeb2.com/image-1_b2f631.jpg"></div>
-      <div class="product-name">Valtieri Classic</div>
-    </div>
-    <div class="product-card">
-      <div class="product-image-wrapper"><img src="https://shopAsset.s3.eu-central-003.backblazeb2.com/image_b78b2c.jpg"></div>
-      <div class="product-name">Valtieri Signature</div>
-    </div>
-  </div>
-</section>
-
-<section class="mid-quote">
-  <p>Craftsmanship is not displayed. It is understood.</p>
-</section>
-
-<section class="section">
-  <div class="products-grid">
-    <div class="product-card">
-      <div class="product-image-wrapper"><img src="https://shopAsset.s3.eu-central-003.backblazeb2.com/image.jpg"></div>
-      <div class="product-name">Valtieri Nero</div>
-    </div>
-    <div class="product-card">
-      <div class="product-image-wrapper"><img src="https://shopAsset.s3.eu-central-003.backblazeb2.com/image-1.jpg"></div>
-      <div class="product-name">Valtieri Oro</div>
-    </div>
-    <div class="product-card">
-      <div class="product-image-wrapper"><img src="https://shopAsset.s3.eu-central-003.backblazeb2.com/image-1_9916e3.jpg"></div>
-      <div class="product-name">Valtieri Edition X</div>
-    </div>
-    <div class="product-card">
-      <div class="product-image-wrapper"><img src="https://shopAsset.s3.eu-central-003.backblazeb2.com/image-1_6409c9.jpg"></div>
-      <div class="product-name">Valtieri Minimal</div>
-    </div>
-  </div>
-</section>
-
-<footer>
-  © 2026 Valtieri. All rights reserved.
-</footer>
-
-</body>
-</html>
+/* TEASER SECTION: HOW IT WORKS */
+.features {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 100px
+  
