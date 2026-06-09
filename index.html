@@ -2,26 +2,30 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 <title>MOGCHECK — The Ultimate Face Symmetry Battlegrounds</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 
 <style>
-/* CORE LUXURY DESIGN */
+/* GAME CLIENT ROOT SYSTEM */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
 }
 
 :root {
   --gold: #c8a97e;
   --gold-dim: #7a6344;
-  --bg: #000000;
-  --bg-card: #0a0a0a;
-  --border: #161616;
+  --bg: #050505;
+  --bg-card: #0d0d0d;
+  --border: #1c1c1c;
   --text-muted: #666666;
+  
+  /* Animated Rank Border Palette */
+  --rank-glow: #ef9f27; /* Elite/True Adam style orange-gold glow */
 }
 
 body {
@@ -30,9 +34,10 @@ body {
   font-family: 'Inter', sans-serif;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
+  min-height: 100vh;
 }
 
-/* PREMIUM FIXED NAVIGATION */
+/* NAVIGATION BAR */
 nav {
   position: fixed;
   width: 100%;
@@ -41,17 +46,49 @@ nav {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 24px 40px;
-  background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
-  backdrop-filter: blur(10px);
+  padding: 20px;
+  background: linear-gradient(to bottom, rgba(5,5,5,0.95), rgba(5,5,5,0.0));
+  backdrop-filter: blur(8px);
   z-index: 100;
-  border-bottom: 1px solid rgba(22, 22, 22, 0.5);
+  border-bottom: 1px solid rgba(28, 28, 28, 0.4);
+}
+
+/* GAMING INTERACTIVE MENU BUTTON */
+.menu-trigger {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px;
+  z-index: 110;
+}
+
+.menu-trigger div {
+  width: 24px;
+  height: 2px;
+  background: #ffffff;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Active State Transformation to X */
+.menu-trigger.active .bar1 {
+  transform: translateY(8px) rotate(45deg);
+  background: var(--gold);
+}
+.menu-trigger.active .bar2 {
+  opacity: 0;
+}
+.menu-trigger.active .bar3 {
+  transform: translateY(-8px) rotate(-45deg);
+  background: var(--gold);
 }
 
 .logo {
   font-family: 'Bebas Neue', sans-serif;
-  font-size: 32px;
-  letter-spacing: 4px;
+  font-size: 28px;
+  letter-spacing: 3px;
   color: #ffffff;
 }
 
@@ -60,25 +97,74 @@ nav {
   font-style: normal;
 }
 
-.nav-links {
+/* SLIDE-OUT PLAYING MODE DRAWER */
+.mode-drawer {
+  position: fixed;
+  top: 0;
+  left: -100%;
+  width: 85%;
+  max-width: 340px;
+  height: 100vh;
+  background: rgba(10, 10, 10, 0.98);
+  border-right: 1px solid var(--border);
+  z-index: 105;
+  padding: 100px 30px 40px;
   display: flex;
-  gap: 30px;
+  flex-direction: column;
+  transition: left 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 20px 0 50px rgba(0,0,0,0.8);
 }
 
-.nav-links a {
+.mode-drawer.open {
+  left: 0;
+}
+
+.drawer-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 14px;
+  letter-spacing: 3px;
   color: var(--text-muted);
-  text-decoration: none;
-  font-size: 12px;
-  letter-spacing: 2px;
+  margin-bottom: 24px;
   text-transform: uppercase;
-  transition: color 0.3s;
 }
 
-.nav-links a:hover, .nav-links a.active {
-  color: var(--gold);
+.mode-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
-/* HERO SECTION */
+.mode-item {
+  background: #121212;
+  border: 1px solid var(--border);
+  padding: 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+.mode-item:hover {
+  border-color: var(--gold);
+  background: #161616;
+}
+
+.mode-name {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 24px;
+  letter-spacing: 2px;
+  color: #ffffff;
+  margin-bottom: 4px;
+}
+
+.mode-desc {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* LOBBY HERO HUB */
 .hero {
   min-height: 100vh;
   display: flex;
@@ -86,79 +172,192 @@ nav {
   justify-content: center;
   align-items: center;
   text-align: center;
-  padding: 120px 20px 60px;
+  padding: 100px 20px 40px;
   position: relative;
 }
 
-/* Subtle gold ambient glow in background */
-.hero::before {
-  content: '';
-  position: absolute;
-  width: 300px;
-  height: 300px;
-  background: var(--gold);
-  opacity: 0.03;
-  filter: blur(120px);
-  top: 35%;
-  pointer-events: none;
+/* ANIMATED RANKED PROFILE BORDER PROTOTYPE */
+.profile-container {
+  position: relative;
+  margin-bottom: 30px;
+  margin-top: 20px;
 }
 
-.hero-eyebrow {
+/* The Glowing Matchmaking Border Layer */
+.rank-border-wire {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  padding: 4px;
+  background: linear-gradient(90deg, var(--gold), var(--rank-glow), #000000, var(--gold));
+  background-size: 300% 300%;
+  animation: rankRotate 4s linear infinite;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 0 25px rgba(239, 159, 39, 0.25);
+}
+
+@keyframes rankRotate {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.avatar-frame {
+  width: 100%;
+  height: 100%;
+  background: #0d0d0d;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  border: 2px solid #050505;
+}
+
+.rank-badge-text {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 20px;
+  letter-spacing: 2px;
+  color: #ffffff;
+}
+
+.level-pill {
+  position: absolute;
+  bottom: -8px;
+  background: var(--gold);
+  color: #000000;
+  font-family: 'Bebas Neue', sans-serif;
   font-size: 11px;
-  letter-spacing: 6px;
-  text-transform: uppercase;
-  color: var(--gold);
-  margin-bottom: 16px;
+  letter-spacing: 1px;
+  padding: 2px 10px;
+  border-radius: 10px;
 }
 
 .hero-title {
   font-family: 'Bebas Neue', sans-serif;
-  font-size: 90px;
-  letter-spacing: 8px;
-  line-height: 0.95;
+  font-size: 52px;
+  letter-spacing: 5px;
+  line-height: 1.0;
   text-transform: uppercase;
-  margin-bottom: 24px;
-}
-
-@media(max-width: 768px) {
-  .hero-title { font-size: 60px; }
-  nav { padding: 20px; }
-  .nav-links { display: none; } /* Clean layout for mobile testing */
+  margin-bottom: 16px;
 }
 
 .hero-subtitle {
-  font-size: 16px;
+  font-size: 13px;
   font-weight: 300;
   color: #888;
-  max-width: 500px;
+  max-width: 320px;
   line-height: 1.6;
-  margin-bottom: 40px;
+  margin-bottom: 32px;
 }
 
-/* INTERACTIVE CTA BUTTON */
+/* LAUNCH ACTION BUTTON */
 .cta-btn {
   background: transparent;
   color: var(--gold);
   border: 1px solid var(--gold);
-  padding: 18px 44px;
+  padding: 16px 40px;
   font-family: 'Bebas Neue', sans-serif;
-  font-size: 24px;
-  letter-spacing: 4px;
+  font-size: 22px;
+  letter-spacing: 3px;
   text-transform: uppercase;
   cursor: pointer;
-  position: relative;
   transition: all 0.3s ease;
+  border-radius: 2px;
 }
 
 .cta-btn:hover {
   background: var(--gold);
   color: #000000;
-  box-shadow: 0 0 30px rgba(200, 169, 126, 0.2);
+  box-shadow: 0 0 25px rgba(200, 169, 126, 0.3);
 }
 
-/* TEASER SECTION: HOW IT WORKS */
-.features {
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: 100px
-  
+/* OVERLAY CURTAIN FOR GAME MODES */
+.overlay-curtain {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.6);
+  z-index: 102;
+  display: none;
+  backdrop-filter: blur(4px);
+}
+</style>
+</head>
+<body>
+
+  <nav>
+    <button class="menu-trigger" onclick="toggleMenu()" aria-label="Open Game Modes">
+      <div class="bar1"></div>
+      <div class="bar2"></div>
+      <div class="bar3"></div>
+    </button>
+    <div class="logo">MOG<em>CHECK</em></div>
+    <div style="width: 44px;"></div> </nav>
+
+  <div class="mode-drawer" id="modeDrawer">
+    <div class="drawer-title">Select Play Style</div>
+    <div class="mode-list">
+      <div class="mode-item" onclick="selectMode('Ranked Matchmaking')">
+        <div class="mode-name">Ranked Arena</div>
+        <div class="mode-desc">1v1 competitive Elo ladder metrics</div>
+      </div>
+      <div class="mode-item" onclick="selectMode('5vs5 Lobby Combat')">
+        <div class="mode-name">5vs5 Skirmish</div>
+        <div class="mode-desc">Squad structure pool comparison</div>
+      </div>
+      <div class="mode-item" onclick="selectMode('Ascending Gauntlet')">
+        <div class="mode-name">Ascending</div>
+        <div class="mode-desc">Endless automated tier boss runs</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="overlay-curtain" id="overlayCurtain" onclick="toggleMenu()"></div>
+
+  <section class="hero">
+    
+    <div class="profile-container">
+      <div class="rank-border-wire">
+        <div class="avatar-frame">
+          <div class="rank-badge-text">TRUE ADAM</div>
+        </div>
+      </div>
+      <div class="level-pill">LVL 26</div>
+    </div>
+
+    <h1 class="hero-title">Facial Symmetry<br>Battlegrounds</h1>
+    <p class="hero-subtitle">
+      Open your matchmaking engine console drawer in the top-left to configure competitive lobbies.
+    </p>
+    
+    <button class="cta-btn" onclick="launchScannerEngine()">Launch Interface</button>
+  </section>
+
+  <script>
+    const drawer = document.getElementById('modeDrawer');
+    const curtain = document.getElementById('overlayCurtain');
+    const trigger = document.querySelector('.menu-trigger');
+
+    function toggleMenu() {
+      drawer.classList.toggle('open');
+      trigger.classList.toggle('active');
+      curtain.style.display = drawer.classList.contains('open') ? 'block' : 'none';
+    }
+
+    function selectMode(modeName) {
+      alert(`Lobby altered: Heading into ${modeName} queue parameters once matchmaking servers go live.`);
+      toggleMenu();
+    }
+
+    function launchScannerEngine() {
+      alert("Scanner integration sequence locked. The camera matrix will initialize directly inside this layout framework.");
+    }
+  </script>
+</body>
+</html>
