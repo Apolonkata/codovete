@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-<title>MOGCHECK — The Ultimate Face Symmetry Battlegrounds</title>
+<title>MOGCHECK — Free Facial Flaws Progress Scanner</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;600;900&display=swap" rel="stylesheet">
 
 <style>
 /* GAME CLIENT ROOT SYSTEM */
@@ -174,6 +174,8 @@ nav {
   text-align: center;
   padding: 100px 20px 40px;
   position: relative;
+  max-width: 480px;
+  margin: 0 auto;
 }
 
 /* ANIMATED RANKED PROFILE BORDER PROTOTYPE */
@@ -215,6 +217,13 @@ nav {
   align-items: center;
   position: relative;
   border: 2px solid #050505;
+  overflow: hidden;
+}
+
+.avatar-frame img {
+  width: 100%;
+  height: 100%;
+  object-cover: cover;
 }
 
 .rank-badge-text {
@@ -249,7 +258,7 @@ nav {
   font-size: 13px;
   font-weight: 300;
   color: #888;
-  max-width: 320px;
+  max-width: 340px;
   line-height: 1.6;
   margin-bottom: 32px;
 }
@@ -267,6 +276,8 @@ nav {
   cursor: pointer;
   transition: all 0.3s ease;
   border-radius: 2px;
+  width: 100%;
+  max-width: 280px;
 }
 
 .cta-btn:hover {
@@ -287,6 +298,196 @@ nav {
   display: none;
   backdrop-filter: blur(4px);
 }
+
+/* SCANNER LAYOUT INTERFACES */
+.scanner-loading {
+  display: none;
+  margin-top: 30px;
+  text-align: center;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.spinner {
+  width: 80px;
+  height: 80px;
+  border: 3px solid rgba(200, 169, 126, 0.1);
+  border-top-color: var(--gold);
+  border-radius: 50%;
+  margin: 0 auto 20px;
+  animation: spin 1s linear infinite;
+}
+
+.loading-text {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 18px;
+  letter-spacing: 2px;
+  color: var(--gold);
+  margin-bottom: 4px;
+}
+
+/* AD SPONSOR CONTAINER */
+.ad-banner {
+  width: 100%;
+  background: #0d0d0d;
+  border: 1px dashed #222222;
+  padding: 12px;
+  text-align: center;
+  border-radius: 4px;
+  margin-top: 24px;
+}
+
+.ad-banner p {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+  font-weight: bold;
+}
+
+.ad-placeholder {
+  font-size: 11px;
+  color: #444;
+}
+
+/* METRIC CARDS / RESULTS */
+.results-container {
+  display: none;
+  width: 100%;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  padding: 24px;
+  border-radius: 4px;
+  text-align: left;
+  margin-top: 30px;
+}
+
+.results-header {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 28px;
+  letter-spacing: 2px;
+  color: var(--gold);
+  text-align: center;
+  margin-bottom: 24px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 12px;
+}
+
+.metric-row {
+  margin-bottom: 20px;
+}
+
+.metric-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #888;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+.metric-score {
+  color: #ffffff;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 18px;
+  letter-spacing: 1px;
+}
+
+.progress-track {
+  height: 6px;
+  background: #151515;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--gold);
+  width: 0%;
+  transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* THE AD GATE BLOCKER */
+.ad-gate-block {
+  background: #111111;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 20px;
+  text-align: center;
+  margin-top: 24px;
+}
+
+.ad-gate-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 20px;
+  letter-spacing: 2px;
+  color: #ffffff;
+  margin-bottom: 8px;
+}
+
+.ad-gate-desc {
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin-bottom: 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.ad-gate-btn {
+  background: var(--gold);
+  color: #000000;
+  border: none;
+  width: 100%;
+  padding: 12px;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 16px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  border-radius: 2px;
+}
+
+.ad-gate-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* REVEALED TIMELINE ROUTINE */
+.routine-box {
+  display: none;
+  background: #111111;
+  border: 1px solid rgba(200, 169, 126, 0.2);
+  padding: 20px;
+  border-radius: 4px;
+  margin-top: 24px;
+}
+
+.routine-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 18px;
+  letter-spacing: 2px;
+  color: #34d399; /* Emerald accent */
+  margin-bottom: 12px;
+}
+
+.routine-step {
+  font-size: 12px;
+  line-height: 1.6;
+  color: #cccccc;
+  margin-bottom: 12px;
+}
+
+.routine-step strong {
+  color: #ffffff;
+}
 </style>
 </head>
 <body>
@@ -298,20 +499,21 @@ nav {
       <div class="bar3"></div>
     </button>
     <div class="logo">MOG<em>CHECK</em></div>
-    <div style="width: 44px;"></div> </nav>
+    <div style="width: 44px;"></div>
+  </nav>
 
   <div class="mode-drawer" id="modeDrawer">
     <div class="drawer-title">Select Play Style</div>
     <div class="mode-list">
-      <div class="mode-item" onclick="selectMode('Ranked Matchmaking')">
+      <div class="mode-item" onclick="selectMode('Ranked Arena')">
         <div class="mode-name">Ranked Arena</div>
         <div class="mode-desc">1v1 competitive Elo ladder metrics</div>
       </div>
-      <div class="mode-item" onclick="selectMode('5vs5 Lobby Combat')">
+      <div class="mode-item" onclick="selectMode('5vs5 Skirmish')">
         <div class="mode-name">5vs5 Skirmish</div>
         <div class="mode-desc">Squad structure pool comparison</div>
       </div>
-      <div class="mode-item" onclick="selectMode('Ascending Gauntlet')">
+      <div class="mode-item" onclick="selectMode('Ascending')">
         <div class="mode-name">Ascending</div>
         <div class="mode-desc">Endless automated tier boss runs</div>
       </div>
@@ -324,19 +526,95 @@ nav {
     
     <div class="profile-container">
       <div class="rank-border-wire">
-        <div class="avatar-frame">
-          <div class="rank-badge-text">TRUE ADAM</div>
+        <div class="avatar-frame" id="avatarFrame">
+          <div class="rank-badge-text" id="avatarText">TRUE ADAM</div>
         </div>
       </div>
       <div class="level-pill">LVL 26</div>
     </div>
 
-    <h1 class="hero-title">Facial Symmetry<br>Battlegrounds</h1>
-    <p class="hero-subtitle">
-      Open your matchmaking engine console drawer in the top-left to configure competitive lobbies.
-    </p>
-    
-    <button class="cta-btn" onclick="launchScannerEngine()">Launch Interface</button>
+    <div id="lobbyScreen" style="width: 100%;">
+      <h1 class="hero-title" id="mainTitle">FREE FACIAL FLAWS<br><span style="color: var(--gold);">PROGRESS SCANNER</span></h1>
+      <p class="hero-subtitle" id="mainSubtitle">
+        Stop letting paywall apps charge $4 per scan. Upload your photo to instantly run our micro-scanners for symmetry, skin flaws, and under-eye bags.
+      </p>
+      
+      <input type="file" id="fileInput" accept="image/*" style="display: none;" onchange="handleImageUpload(event)" />
+      
+      <button class="cta-btn" onclick="document.getElementById('fileInput').click()">Scan My Face</button>
+    </div>
+
+    <div class="scanner-loading" id="scannerState" style="width: 100%;">
+      <div class="spinner"></div>
+      <div class="loading-text">Extracting Facial Landmarks...</div>
+      <p style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.5px;">Measuring asymmetry vectors & dermal clarity</p>
+    </div>
+
+    <div class="results-container" id="resultsState">
+      <div class="results-header">Self-Progress Metrics</div>
+      
+      <div class="metric-row">
+        <div class="metric-label">
+          <span>Facial Symmetry</span>
+          <span class="metric-score" id="scoreSymmetry">--</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="fillSymmetry"></div>
+        </div>
+      </div>
+
+      <div class="metric-row">
+        <div class="metric-label">
+          <span>Skin Surface Clarity</span>
+          <span class="metric-score" id="scoreSkin">--</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="fillSkin"></div>
+        </div>
+      </div>
+
+      <div class="metric-row">
+        <div class="metric-label">
+          <span>Eye Bag Density</span>
+          <span class="metric-score" id="scoreEyes">--</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="fillEyes"></div>
+        </div>
+      </div>
+
+      <div class="metric-row" style="margin-bottom: 0;">
+        <div class="metric-label">
+          <span>Submental (Chin/Neck) Fat</span>
+          <span class="metric-score" id="scoreSubmental">--</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="fillSubmental"></div>
+        </div>
+      </div>
+
+      <div class="ad-gate-block" id="adGate">
+        <div class="ad-gate-title">View Your 14-Day Routine</div>
+        <div class="ad-gate-desc">Watch a quick 5-second sponsor video to unlock your targeted exercises for posture correction & skin clearing.</div>
+        <button class="ad-gate-btn" id="adButton" onclick="simulateAdVideo()">Unlock Free Routine</button>
+      </div>
+
+      <div class="routine-box" id="routineResult">
+        <div class="routine-title">🏆 14-Day Corrective Program</div>
+        <div class="routine-step">
+          <strong>Days 1-7 (Micro-Posture & Eyes):</strong> Apply a cold compress morning and evening for 5 minutes to stimulate blood circulation and clear eye bag density. Focus on keeping your thoracic posture neutral.
+        </div>
+        <div class="routine-step" style="margin-bottom: 0;">
+          <strong>Days 8-14 (Chin Framework):</strong> Perform 3-minute resistance chin tucks daily. Focus on keeping your tongue flat against the roof of your mouth (correct mewing alignment) to tighten submental neck fat.
+        </div>
+      </div>
+    </div>
+
+    <div class="ad-banner">
+      <p>Sponsored Advertisement</p>
+      <div class="ad-placeholder">[Ad network responsive banner placement]</div>
+    </div>
+
   </section>
 
   <script>
@@ -351,13 +629,66 @@ nav {
     }
 
     function selectMode(modeName) {
-      alert(`Lobby altered: Heading into ${modeName} queue parameters once matchmaking servers go live.`);
+      alert(`Mode updated: Transitioning to ${modeName} queue guidelines.`);
       toggleMenu();
     }
 
-    function launchScannerEngine() {
-      alert("Scanner integration sequence locked. The camera matrix will initialize directly inside this layout framework.");
+    // IMAGE UPLOADER & GENERATION ENGINE
+    function handleImageUpload(event) {
+      const file = event.target.files[0];
+      if (file) {
+        // Hide Main Lobby
+        document.getElementById('lobbyScreen').style.display = 'none';
+        // Show Spinner
+        document.getElementById('scannerState').style.display = 'block';
+
+        // Render preview inside the glowing gaming profile frame!
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const avatarFrame = document.getElementById('avatarFrame');
+          avatarFrame.innerHTML = `<img src="${e.target.result}" alt="Selfie Analysis" />`;
+        }
+        reader.readAsDataURL(file);
+
+        // Run analysis processing simulation
+        setTimeout(() => {
+          document.getElementById('scannerState').style.display = 'none';
+          document.getElementById('resultsState').style.display = 'block';
+
+          // Inject random realistic mock self-progress values
+          const symmetry = Math.floor(Math.random() * 15) + 81;   // 81-95%
+          const skin = Math.floor(Math.random() * 20) + 75;       // 75-95%
+          const eyes = Math.floor(Math.random() * 25) + 65;       // 65-90%
+          const submental = Math.floor(Math.random() * 30) + 70;  // 70-100%
+
+          document.getElementById('scoreSymmetry').innerText = `${symmetry}%`;
+          document.getElementById('fillSymmetry').style.width = `${symmetry}%`;
+
+          document.getElementById('scoreSkin').innerText = `${skin}%`;
+          document.getElementById('fillSkin').style.width = `${skin}%`;
+
+          document.getElementById('scoreEyes').innerText = `${eyes}%`;
+          document.getElementById('fillEyes').style.width = `${eyes}%`;
+
+          document.getElementById('scoreSubmental').innerText = `${submental}%`;
+          document.getElementById('fillSubmental').style.width = `${submental}%`;
+
+        }, 3200);
+      }
+    }
+
+    // AD WALL SIMULATION LOCK OUT
+    function simulateAdVideo() {
+      const btn = document.getElementById('adButton');
+      btn.innerText = "Sponsor Stream Initializing...";
+      btn.disabled = true;
+
+      setTimeout(() => {
+        document.getElementById('adGate').style.display = 'none';
+        document.getElementById('routineResult').style.display = 'block';
+      }, 4000);
     }
   </script>
 </body>
-</html>
+  </html>
+                                                         
