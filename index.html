@@ -1,1 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MOG BATTLE - AI Face Symmetry Scanner</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
 
+  <nav class="navbar">
+    <div class="nav-left">
+      <button class="profile-btn" aria-label="User Profile">
+        <i data-lucide="user"></i>
+      </button>
+    </div>
+    <div class="nav-brand">
+      <span class="logo-text">MOG<strong>BATTLE</strong></span>
+    </div>
+    <div class="nav-right">
+      <span class="badge">AI v1.0</span>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <h1>AI Face Symmetry & Proportions</h1>
+    <p>Analyze your facial structure, measure symmetry ratios, and track your progress.</p>
+    
+    <div class="features-list">
+      <div class="feature-item"><i data-lucide="zap"></i> Instant AI Scan</div>
+      <div class="feature-item"><i data-lucide="shield-check"></i> 100% Private (Browser-based)</div>
+      <div class="feature-item"><i data-lucide="scan"></i> 468 Landmark Points</div>
+    </div>
+  </header>
+
+  <main class="scanner-container">
+    <div class="video-card">
+      <div class="video-wrapper">
+        <video id="webcam" autoplay playsinline muted></video>
+        <canvas id="overlay"></canvas>
+        <div id="camera-placeholder" class="placeholder">
+          <i data-lucide="camera" class="placeholder-icon"></i>
+          <p>Camera is currently off</p>
+        </div>
+      </div>
+
+      <div class="controls">
+        <button id="start-btn" class="btn btn-secondary">
+          <i data-lucide="video"></i> Start Camera
+        </button>
+        <button id="scan-btn" class="btn btn-primary" disabled>
+          <i data-lucide="scan-face"></i> Scan Face
+        </button>
+      </div>
+    </div>
+
+    <section id="results" class="results-card hidden">
+      <h2>Scan Results</h2>
+      <div class="overall-score">
+        <span class="score-number" id="score-value">--</span>
+        <span class="score-label">Overall Symmetry</span>
+      </div>
+
+      <div class="metrics-grid">
+        <div class="metric-box">
+          <span class="metric-title">Eyes Symmetry</span>
+          <span class="metric-value" id="eye-score">--</span>
+        </div>
+        <div class="metric-box">
+          <span class="metric-title">Jawline Alignment</span>
+          <span class="metric-value" id="jaw-score">--</span>
+        </div>
+        <div class="metric-box">
+          <span class="metric-title">Lips Proportion</span>
+          <span class="metric-value" id="lip-score">--</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+  <script>
+    // Initialize icons
+    lucide.createIcons();
+  </script>
+</body>
+</html>
