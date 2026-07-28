@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MOG BATTLE - AI Face Symmetry Scanner</title>
+  <title>SYMMRATE - AI Face Symmetry Scanner</title>
   <link rel="stylesheet" href="style.css">
   <script src="https://unpkg.com/lucide@latest"></script>
 </head>
@@ -11,15 +11,26 @@
 
   <nav class="navbar">
     <div class="nav-left">
-      <button class="profile-btn" aria-label="User Profile">
-        <i data-lucide="user"></i>
-      </button>
+      <div class="profile-menu-container">
+        <button id="profile-btn" class="profile-btn" aria-label="User Profile">
+          <i data-lucide="user"></i>
+        </button>
+        <div id="profile-dropdown" class="dropdown-menu hidden">
+          <a href="#" class="dropdown-item"><i data-lucide="user"></i> Profile</a>
+          <a href="#" class="dropdown-item"><i data-lucide="line-chart"></i> Progress</a>
+          <a href="#" class="dropdown-item"><i data-lucide="trophy"></i> Rank</a>
+        </div>
+      </div>
     </div>
+
     <div class="nav-brand">
-      <span class="logo-text">MOG<strong>BATTLE</strong></span>
+      <span class="logo-text">SYMM<strong>RATE</strong></span>
     </div>
+
     <div class="nav-right">
-      <span class="badge">AI v1.0</span>
+      <button id="theme-toggle" class="theme-btn" aria-label="Toggle Theme">
+        <i data-lucide="sun" id="theme-icon"></i>
+      </button>
     </div>
   </nav>
 
@@ -83,6 +94,33 @@
   <script>
     // Initialize icons
     lucide.createIcons();
+
+    // Toggle Profile Dropdown
+    const profileBtn = document.getElementById('profile-btn');
+    const profileDropdown = document.getElementById('profile-dropdown');
+
+    profileBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      profileDropdown.classList.toggle('hidden');
+    });
+
+    document.addEventListener('click', () => {
+      if (!profileDropdown.classList.contains('hidden')) {
+        profileDropdown.classList.add('hidden');
+      }
+    });
+
+    // Light/Dark Theme Toggle
+    const themeToggleBtn = document.getElementById('theme-toggle');
+    
+    themeToggleBtn.addEventListener('click', () => {
+      const isDark = document.body.getAttribute('data-theme') === 'dark';
+      if (isDark) {
+        document.body.removeAttribute('data-theme');
+      } else {
+        document.body.setAttribute('data-theme', 'dark');
+      }
+    });
   </script>
 </body>
 </html>
