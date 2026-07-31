@@ -1,5 +1,5 @@
 // ==========================================
-// 1. THEME & NAVIGATION CONTROLS (Your Code)
+// 1. THEME & NAVIGATION CONTROLS
 // ==========================================
 
 const themeToggleBtn = document.getElementById('theme-toggle');
@@ -139,14 +139,14 @@ function loadSavedProfile() {
 
 loadSavedProfile();
 
-// Rank Tier Calculator (/10 Scale)
+// Strict Rank Tier Calculator (/10 Scale)
 function calculateRank(score) {
   if (score === '--') return 'Unranked';
   const num = parseFloat(score);
-  if (num >= 9.0) return 'Gigachad 👑';
-  if (num >= 8.0) return 'Mogger ⚡';
-  if (num >= 7.0) return 'Chadlite 🔥';
-  if (num >= 5.5) return 'Normie';
+  if (num >= 8.5) return 'Gigachad 👑';
+  if (num >= 7.5) return 'Mogger ⚡';
+  if (num >= 6.5) return 'Chadlite 🔥';
+  if (num >= 5.0) return 'Normie';
   return 'Sub-Five';
 }
 
@@ -243,18 +243,75 @@ function calculateSymmetryRatio(dist1, dist2) {
   return Math.min(100, Math.max(0, ratio * 100));
 }
 
-// Strict 1-10 Scale Conversion Algorithm
+// Stricter Attractiveness Rating Curve (Maps standard 90-95% symmetry to realistic 6.0-7.8 range)
 function convertToTenScale(rawPercent) {
-  if (rawPercent < 70) return (Math.max(1.0, (rawPercent / 20))).toFixed(1);
+  if (rawPercent < 75) {
+    return (Math.max(1.0, (rawPercent / 20))).toFixed(1);
+  }
 
-  // Exponential scaling formula: pushes standard scores down so 9.0+ is rare
-  let normalized = (rawPercent - 75) / 24; 
-  if (normalized < 0) normalized = 0;
-  
-  const curved = Math.pow(normalized, 1.4); 
-  const score = 5.0 + (curved * 4.9);       
+  let score;
+  if (rawPercent < 90) {
+    // 75% -> 89.9% raw symmetry maps to 3.5 -> 6.2/10
+    score = 3.5 + ((rawPercent - 75) * 0.18);
+  } else if (rawPercent < 96) {
+    // 90% -> 95.9% raw symmetry maps to 6.3 -> 7.8/10
+    score = 6.3 + ((rawPercent - 90) * 0.25);
+  } else {
+    // 96% -> 100% raw symmetry maps to 7.9 -> 9.8/10 (Gigachad level)
+    score = 7.9 + ((rawPercent - 96) * 0.47);
+  }
 
   return Math.min(9.9, Math.max(1.0, score)).toFixed(1);
+}
+
+// Actionable Improvement Generator
+function generateImprovementTips(eyeScore, jawScore, lipScore) {
+  const tipsContainer = document.getElementById('improvement-tips');
+  if (!tipsContainer) return;
+
+  let tipsHTML = '';
+
+  // Eye Analysis
+  if (parseFloat(eyeScore) < 7.0) {
+    tipsHTML += `
+      <div style="background: rgba(239, 68, 68, 0.1); border-left: 3px solid #ef4444; padding: 8px 12px; border-radius: 4px;">
+        <strong>👁️ Eye Symmetry:</strong> Minor imbalance detected. Avoid sleeping predominantly on one side of your face and maintain posture alignment.
+      </div>`;
+  } else {
+    tipsHTML += `
+      <div style="background: rgba(34, 197, 94, 0.1); border-left: 3px solid #22c55e; padding: 8px 12px; border-radius: 4px;">
+        <strong>👁️ Eye Symmetry:</strong> Excellent alignment and balanced periocular proportions.
+      </div>`;
+  }
+
+  // Jawline Analysis
+  if (parseFloat(jawScore) < 7.0) {
+    tipsHTML += `
+      <div style="background: rgba(239, 68, 68, 0.1); border-left: 3px solid #ef4444; padding: 8px 12px; border-radius: 4px;">
+        <strong>🦴 Jawline Alignment:</strong> Minor asymmetry. Practice proper tongue posture (mewing) and chew evenly on both sides of your mouth.
+      </div>`;
+  } else {
+    tipsHTML += `
+      <div style="background: rgba(34, 197, 94, 0.1); border-left: 3px solid #22c55e; padding: 8px 12px; border-radius: 4px;">
+        <strong>🦴 Jawline Alignment:</strong> Strong lateral symmetry and sharp jawline masseter balance.
+      </div>`;
+  }
+
+  // Lip Analysis
+  if (parseFloat(lipScore) < 7.0) {
+    tipsHTML += `
+      <div style="background: rgba(239, 68, 68, 0.1); border-left: 3px solid #ef4444; padding: 8px 12px; border-radius: 4px;">
+        <strong>👄 Lower Face:</strong> Avoid mouth breathing to preserve proper palatal width and lip seal symmetry.
+      </div>`;
+  } else {
+    tipsHTML += `
+      <div style="background: rgba(34, 197, 94, 0.1); border-left: 3px solid #22c55e; padding: 8px 12px; border-radius: 4px;">
+        <strong>👄 Lower Face:</strong> Proportional lip corner ratio and resting facial balance.
+      </div>`;
+  }
+
+  tipsContainer.innerHTML = tipsHTML;
+  if (window.lucide) window.lucide.createIcons();
 }
 
 // Face Scan Math Calculation
@@ -293,6 +350,9 @@ if (scanBtn) {
     document.getElementById('eye-score').innerText = `${eyeRating}/10`;
     document.getElementById('jaw-score').innerText = `${jawRating}/10`;
     document.getElementById('lip-score').innerText = `${lipRating}/10`;
+
+    // Generate actionable improvement tips
+    generateImprovementTips(eyeRating, jawRating, lipRating);
 
     if (resultsCard) resultsCard.classList.remove('hidden');
 
