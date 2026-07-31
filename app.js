@@ -126,25 +126,32 @@ function loadSavedProfile() {
   const bestScore = localStorage.getItem('symmrate_best_score') || '--';
   const totalScans = localStorage.getItem('symmrate_total_scans') || '0';
   
-  if (document.getElementById('profile-best-score')) document.getElementById('profile-best-score').innerText = bestScore !== '--' ? bestScore + '%' : '--';
-  if (document.getElementById('profile-total-scans')) document.getElementById('profile-total-scans').innerText = totalScans;
-  if (document.getElementById('profile-rank')) document.getElementById('profile-rank').innerText = calculateRank(bestScore);
+  if (document.getElementById('profile-best-score')) {
+    document.getElementById('profile-best-score').innerText = bestScore !== '--' ? bestScore + '/10' : '--';
+  }
+  if (document.getElementById('profile-total-scans')) {
+    document.getElementById('profile-total-scans').innerText = totalScans;
+  }
+  if (document.getElementById('profile-rank')) {
+    document.getElementById('profile-rank').innerText = calculateRank(bestScore);
+  }
 }
 
 loadSavedProfile();
 
+// Rank Tier Calculator (/10 Scale)
 function calculateRank(score) {
   if (score === '--') return 'Unranked';
   const num = parseFloat(score);
-  if (num >= 92) return 'Gigachad 👑';
-  if (num >= 85) return 'Mogger ⚡';
-  if (num >= 75) return 'Chadlite 🔥';
-  if (num >= 65) return 'Normie';
+  if (num >= 9.0) return 'Gigachad 👑';
+  if (num >= 8.0) return 'Mogger ⚡';
+  if (num >= 7.0) return 'Chadlite 🔥';
+  if (num >= 5.5) return 'Normie';
   return 'Sub-Five';
 }
 
 // ==========================================
-// 2. MEDIAPIPE AI FACE MESH & SYMMETRY ENGINE
+// 2. MEDIAPIPE AI FACE MESH & SCORING ENGINE
 // ==========================================
 
 const videoElement = document.getElementById('webcam');
@@ -172,7 +179,6 @@ faceMesh.setOptions({
 
 // Real-time canvas rendering callback
 faceMesh.onResults((results) => {
-  // Synchronize canvas size with live video aspect ratio
   if (canvasElement.width !== videoElement.videoWidth) {
     canvasElement.width = videoElement.videoWidth;
     canvasElement.height = videoElement.videoHeight;
@@ -183,7 +189,7 @@ faceMesh.onResults((results) => {
 
   if (results.multiFaceLandmarks && results.multiFaceLandmarks.length > 0) {
     latestLandmarks = results.multiFaceLandmarks[0];
-    scanBtn.disabled = false; // Enable scan button when a face is present
+    scanBtn.disabled = false;
 
     // Render facial mesh dots
     for (const point of latestLandmarks) {
@@ -230,11 +236,25 @@ function getDistance(p1, p2) {
   return Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2));
 }
 
-// Symmetry Percentage Calculation
+// Raw Symmetry Ratio
 function calculateSymmetryRatio(dist1, dist2) {
   if (dist1 === 0 || dist2 === 0) return 100;
   const ratio = Math.min(dist1, dist2) / Math.max(dist1, dist2);
   return Math.min(100, Math.max(0, ratio * 100));
+}
+
+// Strict 1-10 Scale Conversion Algorithm
+function convertToTenScale(rawPercent) {
+  if (rawPercent < 70) return (Math.max(1.0, (rawPercent / 20))).toFixed(1);
+
+  // Exponential scaling formula: pushes standard scores down so 9.0+ is rare
+  let normalized = (rawPercent - 75) / 24; 
+  if (normalized < 0) normalized = 0;
+  
+  const curved = Math.pow(normalized, 1.4); 
+  const score = 5.0 + (curved * 4.9);       
+
+  return Math.min(9.9, Math.max(1.0, score)).toFixed(1);
 }
 
 // Face Scan Math Calculation
@@ -242,54 +262,51 @@ if (scanBtn) {
   scanBtn.addEventListener('click', () => {
     if (!latestLandmarks) return;
 
-    // Key MediaPipe Indices:
-    // 6: Nose Bridge (Center Axis reference)
-    // Left Eye Outer (33), Right Eye Outer (263)
-    // Left Jaw (172), Right Jaw (397)
-    // Left Lip Corner (61), Right Lip Corner (291)
-    
     const centerPoint = latestLandmarks[6];
 
-    // 1. Eye Symmetry (Distance from center to outer corners)
+    // 1. Eye Symmetry
     const leftEyeDist = getDistance(centerPoint, latestLandmarks[33]);
     const rightEyeDist = getDistance(centerPoint, latestLandmarks[263]);
-    const eyeSymmetry = calculateSymmetryRatio(leftEyeDist, rightEyeDist);
+    const rawEye = calculateSymmetryRatio(leftEyeDist, rightEyeDist);
 
-    // 2. Jawline Symmetry (Distance from center to jaw corners)
+    // 2. Jawline Symmetry
     const leftJawDist = getDistance(centerPoint, latestLandmarks[172]);
     const rightJawDist = getDistance(centerPoint, latestLandmarks[397]);
-    const jawSymmetry = calculateSymmetryRatio(leftJawDist, rightJawDist);
+    const rawJaw = calculateSymmetryRatio(leftJawDist, rightJawDist);
 
-    // 3. Lips Proportion (Distance from center to mouth corners)
+    // 3. Lips Symmetry
     const leftLipDist = getDistance(centerPoint, latestLandmarks[61]);
     const rightLipDist = getDistance(centerPoint, latestLandmarks[291]);
-    const lipSymmetry = calculateSymmetryRatio(leftLipDist, rightLipDist);
+    const rawLip = calculateSymmetryRatio(leftLipDist, rightLipDist);
 
-    // 4. Weighted Overall Score
-    const overallSymmetry = (eyeSymmetry * 0.4) + (jawSymmetry * 0.35) + (lipSymmetry * 0.25);
+    // Weighted raw score
+    const rawOverall = (rawEye * 0.4) + (rawJaw * 0.35) + (rawLip * 0.25);
 
-    // Update Results UI
-    document.getElementById('score-value').innerText = `${overallSymmetry.toFixed(1)}%`;
-    document.getElementById('eye-score').innerText = `${eyeSymmetry.toFixed(1)}%`;
-    document.getElementById('jaw-score').innerText = `${jawSymmetry.toFixed(1)}%`;
-    document.getElementById('lip-score').innerText = `${lipSymmetry.toFixed(1)}%`;
+    // 4. Convert to 1/10 Ratings
+    const eyeRating = convertToTenScale(rawEye);
+    const jawRating = convertToTenScale(rawJaw);
+    const lipRating = convertToTenScale(rawLip);
+    const overallRating = convertToTenScale(rawOverall);
+
+    // 5. Update UI
+    document.getElementById('score-value').innerText = `${overallRating}/10`;
+    document.getElementById('eye-score').innerText = `${eyeRating}/10`;
+    document.getElementById('jaw-score').innerText = `${jawRating}/10`;
+    document.getElementById('lip-score').innerText = `${lipRating}/10`;
 
     if (resultsCard) resultsCard.classList.remove('hidden');
 
-    // Update LocalStorage Stats
+    // 6. Update LocalStorage Stats
     let totalScans = parseInt(localStorage.getItem('symmrate_total_scans') || '0', 10);
     totalScans += 1;
     localStorage.setItem('symmrate_total_scans', totalScans.toString());
 
     let bestScore = parseFloat(localStorage.getItem('symmrate_best_score') || '0');
-    if (overallSymmetry > bestScore) {
-      localStorage.setItem('symmrate_best_score', overallSymmetry.toFixed(1));
+    if (parseFloat(overallRating) > bestScore) {
+      localStorage.setItem('symmrate_best_score', overallRating);
     }
 
-    // Refresh profile modal numbers
     loadSavedProfile();
-
-    // Scroll smoothly to results card
     resultsCard.scrollIntoView({ behavior: 'smooth' });
   });
 }
