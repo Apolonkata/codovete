@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SYMMRATE - AI Face Symmetry Scanner</title>
+  <title>SYMMRATE - AI Face Symmetry & Aesthetics</title>
   <link rel="stylesheet" href="style.css">
   <script src="https://unpkg.com/lucide@latest"></script>
 </head>
-<body>
+<body data-theme="dark">
 
   <nav class="navbar">
     <div class="nav-left">
@@ -28,28 +28,26 @@
     </div>
 
     <div class="nav-right">
-      <button id="theme-toggle" class="theme-btn" aria-label="Toggle Theme">
-        <i data-lucide="sun" id="theme-icon"></i>
-      </button>
+      <div class="badge-tag">PRO</div>
     </div>
   </nav>
 
   <header class="hero">
-    <h1>AI Face Symmetry & Proportions</h1>
-    <p>Analyze your facial structure, measure symmetry ratios, and track your progress.</p>
+    <h1>AI Face Symmetry & Aesthetics</h1>
+    <p>Analyze your 3D facial structure, measure landmark proportions, and track your potential.</p>
     
     <div class="features-list">
       <div class="feature-item"><i data-lucide="zap"></i> Instant AI Scan</div>
-      <div class="feature-item"><i data-lucide="shield-check"></i> 100% Private (Browser-based)</div>
-      <div class="feature-item"><i data-lucide="scan"></i> 468 Landmark Points</div>
+      <div class="feature-item"><i data-lucide="shield-check"></i> 100% Private</div>
+      <div class="feature-item"><i data-lucide="scan"></i> 468 Landmarks</div>
     </div>
   </header>
 
   <main class="scanner-container">
     <div class="video-card">
-      <div class="video-wrapper" style="position: relative;">
-        <video id="webcam" autoplay playsinline muted style="width: 100%; height: auto; display: none;"></video>
-        <canvas id="overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></canvas>
+      <div class="video-wrapper">
+        <video id="webcam" autoplay playsinline muted></video>
+        <canvas id="overlay"></canvas>
         <div id="camera-placeholder" class="placeholder">
           <i data-lucide="camera" class="placeholder-icon"></i>
           <p>Camera is currently off</p>
@@ -67,33 +65,76 @@
     </div>
 
     <section id="results" class="results-card hidden">
-      <h2>Scan Results</h2>
-      <div class="overall-score">
-        <span class="score-number" id="score-value">--</span>
-        <span class="score-label">Overall Attractiveness & Symmetry</span>
+      <div class="results-header">
+        <h2>Facial Breakdown</h2>
+        <span class="score-badge" id="overall-tier">Analysing...</span>
       </div>
 
-      <div class="metrics-grid">
-        <div class="metric-box">
-          <span class="metric-title">Eyes Symmetry</span>
-          <span class="metric-value" id="eye-score">--</span>
+      <div class="overall-score-card">
+        <div class="score-main">
+          <span class="score-number" id="score-value">--</span>
+          <span class="score-max">/100</span>
         </div>
-        <div class="metric-box">
-          <span class="metric-title">Jawline Alignment</span>
-          <span class="metric-value" id="jaw-score">--</span>
-        </div>
-        <div class="metric-box">
-          <span class="metric-title">Lips Proportion</span>
-          <span class="metric-value" id="lip-score">--</span>
-        </div>
+        <span class="score-label">Overall Symmetry & Proportions Score</span>
       </div>
 
-      <div class="analysis-card" style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1);">
-        <h3 style="font-size: 1.1rem; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
-          <i data-lucide="sparkles"></i> AI Improvement Recommendations
-        </h3>
-        <div id="improvement-tips" class="tips-list" style="display: flex; flex-direction: column; gap: 0.75rem; text-align: left; font-size: 0.9rem; opacity: 0.9;">
+      <div class="categories-container">
+
+        <div class="category-card">
+          <div class="category-header">
+            <span class="category-title"><i data-lucide="sparkles"></i> Facial Harmony</span>
+            <span class="category-score" id="harmony-score-text">--/100</span>
           </div>
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill" id="harmony-bar" style="width: 0%;"></div>
+          </div>
+        </div>
+
+        <div class="category-card">
+          <div class="category-header">
+            <span class="category-title"><i data-lucide="eye"></i> Eye Area Alignment</span>
+            <span class="category-score" id="eye-score-text">--/100</span>
+          </div>
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill" id="eye-bar" style="width: 0%;"></div>
+          </div>
+        </div>
+
+        <div class="category-card">
+          <div class="category-header">
+            <span class="category-title"><i data-lucide="shield"></i> Jawline & Structure</span>
+            <span class="category-score" id="jaw-score-text">--/100</span>
+          </div>
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill" id="jaw-bar" style="width: 0%;"></div>
+          </div>
+        </div>
+
+        <div class="category-card">
+          <div class="category-header">
+            <span class="category-title"><i data-lucide="compass"></i> Nose Proportions</span>
+            <span class="category-score" id="nose-score-text">--/100</span>
+          </div>
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill" id="nose-bar" style="width: 0%;"></div>
+          </div>
+        </div>
+
+        <div class="category-card">
+          <div class="category-header">
+            <span class="category-title"><i data-lucide="smile"></i> Lip & Lower Face</span>
+            <span class="category-score" id="lip-score-text">--/100</span>
+          </div>
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill" id="lip-bar" style="width: 0%;"></div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="analysis-card">
+        <h3><i data-lucide="zap"></i> Key AI Observations</h3>
+        <div id="improvement-tips" class="tips-list"></div>
       </div>
     </section>
   </main>
@@ -157,10 +198,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous"></script>
-
   <script src="app.js"></script>
-  <script>
-    lucide.createIcons();
-  </script>
+  <script>lucide.createIcons();</script>
 </body>
 </html>
