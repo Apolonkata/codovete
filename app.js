@@ -4,8 +4,8 @@
 // Make sure you include the Supabase CDN script in your HTML:
 // <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-const SUPABASE_URL = 'YOUR_SUPABASE_URL';
-const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+const SUPABASE_URL = 'https://nhngytexcwzutrckgwzw.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_fumZiWoHnBYzFnvn71GnxQ_TYME4LZx';
 const supabase = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
 
 let currentUser = null;
