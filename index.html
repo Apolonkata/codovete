@@ -9,6 +9,7 @@
 </head>
 <body data-theme="dark">
 
+  <!-- NAVBAR -->
   <nav class="navbar">
     <div class="nav-left">
       <div class="profile-menu-container">
@@ -19,6 +20,16 @@
           <a href="#" id="menu-profile-link" class="dropdown-item"><i data-lucide="user"></i> Profile</a>
           <a href="#" class="dropdown-item"><i data-lucide="line-chart"></i> Progress</a>
           <a href="#" class="dropdown-item"><i data-lucide="trophy"></i> Rank</a>
+          
+          <div class="dropdown-divider"></div>
+
+          <!-- Dynamic Auth Options -->
+          <a href="#" id="menu-login-link" class="dropdown-item highlight-link">
+            <i data-lucide="log-in"></i> Sign In / Register
+          </a>
+          <a href="#" id="menu-logout-link" class="dropdown-item hidden text-red">
+            <i data-lucide="log-out"></i> Log Out
+          </a>
         </div>
       </div>
     </div>
@@ -79,7 +90,6 @@
       </div>
 
       <div class="categories-container">
-
         <div class="category-card">
           <div class="category-header">
             <span class="category-title"><i data-lucide="sparkles"></i> Facial Harmony</span>
@@ -129,7 +139,6 @@
             <div class="progress-bar-fill" id="lip-bar" style="width: 0%;"></div>
           </div>
         </div>
-
       </div>
 
       <div class="analysis-card">
@@ -139,6 +148,36 @@
     </section>
   </main>
 
+  <!-- AUTH MODAL -->
+  <div id="auth-modal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="auth-modal-title">Welcome to SymmRate</h2>
+        <button id="close-auth-btn" class="close-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="auth-form">
+          <div class="form-group">
+            <label for="auth-email">Email</label>
+            <input type="email" id="auth-email" class="form-input" placeholder="Enter your email" required />
+          </div>
+          <div class="form-group">
+            <label for="auth-password">Password</label>
+            <input type="password" id="auth-password" class="form-input" placeholder="Enter your password" required />
+          </div>
+          
+          <button id="auth-submit-btn" class="btn btn-primary" style="margin-top: 8px;">Sign In</button>
+          
+          <p class="auth-toggle-text">
+            <span id="auth-toggle-label">Don't have an account?</span>
+            <a href="#" id="auth-toggle-btn">Sign Up</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROFILE MODAL -->
   <div id="profile-modal" class="modal hidden">
     <div class="modal-content">
       <div class="modal-header">
@@ -196,6 +235,7 @@
     </div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous"></script>
   <script src="app.js"></script>
