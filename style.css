@@ -62,6 +62,19 @@ body {
   cursor: pointer;
 }
 
+.theme-btn {
+  background: var(--btn-secondary-bg);
+  border: 1px solid var(--card-border);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-main);
+  cursor: pointer;
+}
+
 .badge-tag {
   background: rgba(59, 130, 246, 0.2);
   color: #60a5fa;
@@ -360,6 +373,12 @@ body {
 .bar-yellow { background-color: var(--tier-yellow); }
 .bar-green { background-color: var(--tier-green); }
 
+/* Dynamic Score Text Colors */
+.text-red { color: var(--tier-red) !important; }
+.text-orange { color: var(--tier-orange) !important; }
+.text-yellow { color: var(--tier-yellow) !important; }
+.text-green { color: var(--tier-green) !important; }
+
 /* Tips Section */
 .analysis-card h3 {
   font-size: 1rem;
@@ -457,4 +476,5 @@ body {
 
 .modal-footer {
   padding: 12px 20px; border-top: 1px solid var(--card-border); display: flex; justify-content: flex-end;
-}
+  }
+  
