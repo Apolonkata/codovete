@@ -5,7 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SYMMRATE - AI Face Symmetry Scanner</title>
   <link rel="stylesheet" href="style.css">
-  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest" defer></script>
+  
+  <!-- Supabase CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
 </head>
 <body>
 
@@ -93,7 +98,7 @@
           <i data-lucide="sparkles"></i> AI Improvement Recommendations
         </h3>
         <div id="improvement-tips" class="tips-list" style="display: flex; flex-direction: column; gap: 0.75rem; text-align: left; font-size: 0.9rem; opacity: 0.9;">
-          </div>
+        </div>
       </div>
     </section>
   </main>
@@ -155,12 +160,19 @@
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous"></script>
+  <!-- MediaPipe CDN Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous" defer></script>
 
-  <script src="app.js"></script>
+  <!-- App Logic -->
+  <script src="app.js" defer></script>
+
+  <!-- Lucide Icon Renderer -->
   <script>
-    lucide.createIcons();
+    document.addEventListener("DOMContentLoaded", () => {
+      if (window.lucide) lucide.createIcons();
+    });
   </script>
 </body>
-</html
+          </html>
+          
