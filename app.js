@@ -311,8 +311,59 @@ if (startBtn) {
   });
 }
 
+// 3D Euclidean Distance Function
 function getDistance(p1, p2) {
-  return Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2));
+  const dx = p2.x - p1.x;
+  const dy = p2.y - p1.y;
+  const dz = (p2.z && p1.z) ? (p2.z - p1.z) : 0;
+  return Math.sqrt(dx * dx + dy * dy + dz * dz);
+}
+
+// Calculate perpendicular distance from point P to midline vector (A -> B)
+function getPerpendicularDistance(P, A, B) {
+  const AB = { x: B.x - A.x, y: B.y - A.y, z: (B.z || 0) - (A.z || 0) };
+  const AP = { x: P.x - A.x, y: P.y - A.y, z: (P.z || 0) - (A.z || 0) };
+
+  const abSq = AB.x * AB.x + AB.y * AB.y + AB.z * AB.z;
+  if (abSq === 0) return getDistance(P, A);
+
+  const dot = AP.x * AB.x + AP.y * AB.y + AP.z * AB.z;
+  const t = dot / abSq;
+
+  const proj = {
+    x: A.x + t * AB.x,
+    y: A.y + t * AB.y,
+    z: (A.z || 0) + t * AB.z
+  };
+
+  return getDistance(P, proj);
+}
+
+// Check Head Alignment (Returns object with yaw, pitch, roll status)
+function checkHeadAlignment(lm) {
+  const leftEyeOuter = lm[33];
+  const rightEyeOuter = lm[263];
+  const noseTip = lm[1];
+  const chin = lm[152];
+
+  // Roll (tilt side-to-side)
+  const dy = rightEyeOuter.y - leftEyeOuter.y;
+  const dx = rightEyeOuter.x - leftEyeOuter.x;
+  const rollAngle = Math.abs(Math.atan2(dy, dx) * (180 / Math.PI));
+
+  // Yaw (turning head left/right)
+  const midEyeX = (leftEyeOuter.x + rightEyeOuter.x) / 2;
+  const eyeWidth = Math.abs(rightEyeOuter.x - leftEyeOuter.x);
+  const yawOffset = Math.abs(noseTip.x - midEyeX) / eyeWidth;
+
+  // Pitch (looking up/down)
+  const faceHeight = getDistance(lm[10], chin);
+  const noseToChin = getDistance(noseTip, chin);
+  const pitchRatio = noseToChin / faceHeight;
+
+  const isAligned = rollAngle < 7 && yawOffset < 0.12 && pitchRatio > 0.35 && pitchRatio < 0.55;
+
+  return { isAligned, rollAngle, yawOffset, pitchRatio };
 }
 
 function calculateSymmetryRatio(dist1, dist2) {
@@ -321,19 +372,14 @@ function calculateSymmetryRatio(dist1, dist2) {
   return Math.min(100, Math.max(0, ratio * 100));
 }
 
+// Normalized Linear Mapping replacing former hyper-exponential drops
 function convertTo100Scale(rawPercent) {
-  if (rawPercent < 75) return Math.round(rawPercent / 2.5);
-
-  let score;
-  if (rawPercent < 90) {
-    score = 35 + ((rawPercent - 75) * 1.8);
-  } else if (rawPercent < 96) {
-    score = 62 + ((rawPercent - 90) * 2.8);
-  } else {
-    score = 79 + ((rawPercent - 96) * 4.7);
-  }
-
-  return Math.min(99, Math.max(10, Math.round(score)));
+  // rawPercent is percentage ratio (e.g., 95%)
+  if (rawPercent >= 98) return Math.round(92 + (rawPercent - 98) * 4); // 92 - 100
+  if (rawPercent >= 92) return Math.round(80 + (rawPercent - 92) * 2); // 80 - 92
+  if (rawPercent >= 85) return Math.round(65 + (rawPercent - 85) * 2.14); // 65 - 80
+  if (rawPercent >= 70) return Math.round(40 + (rawPercent - 70) * 1.66); // 40 - 65
+  return Math.round(Math.max(10, rawPercent * 0.57));
 }
 
 function updateProgressBar(barId, textId, score) {
@@ -398,23 +444,38 @@ if (scanBtn) {
   scanBtn.addEventListener('click', async () => {
     if (!latestLandmarks) return;
 
-    const centerPoint = latestLandmarks[6];
+    // Head Pose Validation Check
+    const pose = checkHeadAlignment(latestLandmarks);
+    if (!pose.isAligned) {
+      alert("Please level your camera and face straight forward. Head tilt or turn detected!");
+    }
 
-    const leftEye = getDistance(centerPoint, latestLandmarks[33]);
-    const rightEye = getDistance(centerPoint, latestLandmarks[263]);
-    const eyeScore = convertTo100Scale(calculateSymmetryRatio(leftEye, rightEye));
+    // Midline defined from Top Mid-brow (Glabella: 10) to Chin Center (152)
+    const topMidline = latestLandmarks[10];
+    const bottomMidline = latestLandmarks[152];
 
-    const leftJaw = getDistance(centerPoint, latestLandmarks[172]);
-    const rightJaw = getDistance(centerPoint, latestLandmarks[397]);
-    const jawScore = convertTo100Scale(calculateSymmetryRatio(leftJaw, rightJaw));
+    // Interpupillary Distance (IPD) as invariant reference baseline scale
+    const ipd = getDistance(latestLandmarks[33], latestLandmarks[263]);
 
-    const leftNose = getDistance(centerPoint, latestLandmarks[129]);
-    const rightNose = getDistance(centerPoint, latestLandmarks[358]);
-    const noseScore = convertTo100Scale(calculateSymmetryRatio(leftNose, rightNose));
+    // Eye Symmetry (Pupil/Canthus distance to axis normalized by IPD)
+    const leftEyeDist = getPerpendicularDistance(latestLandmarks[33], topMidline, bottomMidline) / ipd;
+    const rightEyeDist = getPerpendicularDistance(latestLandmarks[263], topMidline, bottomMidline) / ipd;
+    const eyeScore = convertTo100Scale(calculateSymmetryRatio(leftEyeDist, rightEyeDist));
 
-    const leftLip = getDistance(centerPoint, latestLandmarks[61]);
-    const rightLip = getDistance(centerPoint, latestLandmarks[291]);
-    const lipScore = convertTo100Scale(calculateSymmetryRatio(leftLip, rightLip));
+    // Jaw Symmetry (Jaw Angles 172 vs 397 normalized by IPD)
+    const leftJawDist = getPerpendicularDistance(latestLandmarks[172], topMidline, bottomMidline) / ipd;
+    const rightJawDist = getPerpendicularDistance(latestLandmarks[397], topMidline, bottomMidline) / ipd;
+    const jawScore = convertTo100Scale(calculateSymmetryRatio(leftJawDist, rightJawDist));
+
+    // Nose Symmetry (Alares 129 vs 358 normalized by IPD)
+    const leftNoseDist = getPerpendicularDistance(latestLandmarks[129], topMidline, bottomMidline) / ipd;
+    const rightNoseDist = getPerpendicularDistance(latestLandmarks[358], topMidline, bottomMidline) / ipd;
+    const noseScore = convertTo100Scale(calculateSymmetryRatio(leftNoseDist, rightNoseDist));
+
+    // Lip Symmetry (Cheilion/Corners 61 vs 291 normalized by IPD)
+    const leftLipDist = getPerpendicularDistance(latestLandmarks[61], topMidline, bottomMidline) / ipd;
+    const rightLipDist = getPerpendicularDistance(latestLandmarks[291], topMidline, bottomMidline) / ipd;
+    const lipScore = convertTo100Scale(calculateSymmetryRatio(leftLipDist, rightLipDist));
 
     const harmonyScore = Math.round((eyeScore * 0.3) + (jawScore * 0.3) + (noseScore * 0.2) + (lipScore * 0.2));
     const overallScore = Math.round((harmonyScore + eyeScore + jawScore) / 3);
@@ -472,4 +533,5 @@ if (scanBtn) {
 
     if (resultsCard) resultsCard.scrollIntoView({ behavior: 'smooth' });
   });
-}
+        }
+  
