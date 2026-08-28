@@ -1,16 +1,12 @@
 // ==========================================
 // 0. SUPABASE CLIENT INITIALIZATION
 // ==========================================
-// Make sure you include the Supabase CDN script in your HTML:
-// <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 const SUPABASE_URL = 'https://nhngytexcwzutrckgwzw.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_fumZiWoHnBYzFnvn71GnxQ_TYME4LZx';
 const supabase = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
 
 let currentUser = null;
 
-// Listen for Auth changes (login/logout)
 if (supabase) {
   supabase.auth.onAuthStateChange(async (event, session) => {
     if (session) {
@@ -23,7 +19,6 @@ if (supabase) {
   });
 }
 
-// Fetch user profile from Supabase profiles table
 async function fetchAndSyncProfile() {
   if (!supabase || !currentUser) return;
 
@@ -41,7 +36,6 @@ async function fetchAndSyncProfile() {
   if (data) {
     if (usernameInput) usernameInput.value = data.display_name || '';
     
-    // Sync Avatar
     if (avatarDisplay) {
       if (data.avatar_url && data.avatar_url.startsWith('data:image')) {
         avatarDisplay.innerHTML = `<img src="${data.avatar_url}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;" alt="Avatar">`;
@@ -50,7 +44,6 @@ async function fetchAndSyncProfile() {
       }
     }
 
-    // Sync Stats
     const bestScore = data.best_score || '--';
     const totalScans = data.total_scans || 0;
 
@@ -66,7 +59,6 @@ async function fetchAndSyncProfile() {
   }
 }
 
-// Fallback to LocalStorage if user is offline/unauthenticated
 function loadLocalFallbackProfile() {
   const savedName = localStorage.getItem('symmrate_username');
   if (savedName && usernameInput) {
@@ -170,7 +162,6 @@ if (avatarInput) {
   });
 }
 
-// Save Profile button handler (Syncs both locally and to Supabase)
 if (saveProfileBtn) {
   saveProfileBtn.addEventListener('click', async () => {
     const nameValue = usernameInput ? usernameInput.value.trim() : '';
@@ -205,7 +196,6 @@ function calculateRank(score) {
   return 'Sub-Five';
 }
 
-// Initial load fallback
 loadLocalFallbackProfile();
 
 // ==========================================
@@ -311,7 +301,7 @@ if (startBtn) {
   });
 }
 
-// 3D Euclidean Distance Function
+// 3D Distance Formula
 function getDistance(p1, p2) {
   const dx = p2.x - p1.x;
   const dy = p2.y - p1.y;
@@ -319,7 +309,7 @@ function getDistance(p1, p2) {
   return Math.sqrt(dx * dx + dy * dy + dz * dz);
 }
 
-// Calculate perpendicular distance from point P to midline vector (A -> B)
+// Perpendicular distance calculation to mid-facial axis (A -> B)
 function getPerpendicularDistance(P, A, B) {
   const AB = { x: B.x - A.x, y: B.y - A.y, z: (B.z || 0) - (A.z || 0) };
   const AP = { x: P.x - A.x, y: P.y - A.y, z: (P.z || 0) - (A.z || 0) };
@@ -339,74 +329,57 @@ function getPerpendicularDistance(P, A, B) {
   return getDistance(P, proj);
 }
 
-// Check Head Alignment (Returns object with yaw, pitch, roll status)
-function checkHeadAlignment(lm) {
-  const leftEyeOuter = lm[33];
-  const rightEyeOuter = lm[263];
-  const noseTip = lm[1];
-  const chin = lm[152];
-
-  // Roll (tilt side-to-side)
-  const dy = rightEyeOuter.y - leftEyeOuter.y;
-  const dx = rightEyeOuter.x - leftEyeOuter.x;
-  const rollAngle = Math.abs(Math.atan2(dy, dx) * (180 / Math.PI));
-
-  // Yaw (turning head left/right)
-  const midEyeX = (leftEyeOuter.x + rightEyeOuter.x) / 2;
-  const eyeWidth = Math.abs(rightEyeOuter.x - leftEyeOuter.x);
-  const yawOffset = Math.abs(noseTip.x - midEyeX) / eyeWidth;
-
-  // Pitch (looking up/down)
-  const faceHeight = getDistance(lm[10], chin);
-  const noseToChin = getDistance(noseTip, chin);
-  const pitchRatio = noseToChin / faceHeight;
-
-  const isAligned = rollAngle < 7 && yawOffset < 0.12 && pitchRatio > 0.35 && pitchRatio < 0.55;
-
-  return { isAligned, rollAngle, yawOffset, pitchRatio };
-}
-
 function calculateSymmetryRatio(dist1, dist2) {
   if (dist1 === 0 || dist2 === 0) return 100;
   const ratio = Math.min(dist1, dist2) / Math.max(dist1, dist2);
   return Math.min(100, Math.max(0, ratio * 100));
 }
 
-// Normalized Linear Mapping replacing former hyper-exponential drops
 function convertTo100Scale(rawPercent) {
-  // rawPercent is percentage ratio (e.g., 95%)
-  if (rawPercent >= 98) return Math.round(92 + (rawPercent - 98) * 4); // 92 - 100
-  if (rawPercent >= 92) return Math.round(80 + (rawPercent - 92) * 2); // 80 - 92
-  if (rawPercent >= 85) return Math.round(65 + (rawPercent - 85) * 2.14); // 65 - 80
-  if (rawPercent >= 70) return Math.round(40 + (rawPercent - 70) * 1.66); // 40 - 65
+  if (rawPercent >= 98) return Math.round(92 + (rawPercent - 98) * 4);
+  if (rawPercent >= 92) return Math.round(80 + (rawPercent - 92) * 2);
+  if (rawPercent >= 85) return Math.round(65 + (rawPercent - 85) * 2.14);
+  if (rawPercent >= 70) return Math.round(40 + (rawPercent - 70) * 1.66);
   return Math.round(Math.max(10, rawPercent * 0.57));
 }
 
+// Update UI Bars and Dynamic Colors
 function updateProgressBar(barId, textId, score) {
   const bar = document.getElementById(barId);
   const text = document.getElementById(textId);
 
-  if (text) text.innerText = `${score}/100`;
+  if (text) {
+    text.innerText = `${score}/100`;
+    text.className = 'category-score';
+  }
+
   if (!bar) return;
 
   bar.className = 'progress-bar-fill';
 
+  let colorClass = 'bar-green';
+  let textColorClass = 'text-green';
+
   if (score < 40) {
-    bar.classList.add('bar-red');
+    colorClass = 'bar-red';
+    textColorClass = 'text-red';
   } else if (score < 60) {
-    bar.classList.add('bar-orange');
+    colorClass = 'bar-orange';
+    textColorClass = 'text-orange';
   } else if (score < 80) {
-    bar.classList.add('bar-yellow');
-  } else {
-    bar.classList.add('bar-green');
+    colorClass = 'bar-yellow';
+    textColorClass = 'text-yellow';
   }
+
+  bar.classList.add(colorClass);
+  if (text) text.classList.add(textColorClass);
 
   setTimeout(() => {
     bar.style.width = `${score}%`;
   }, 100);
 }
 
-function generateImprovementTips(harmony, eye, jaw, nose, lip) {
+function generateImprovementTips(eye, jaw, lip, nose, midface) {
   const tipsContainer = document.getElementById('improvement-tips');
   if (!tipsContainer) return;
 
@@ -436,62 +409,76 @@ function generateImprovementTips(harmony, eye, jaw, nose, lip) {
       </div>`;
   }
 
+  if (midface < 65) {
+    tipsHTML += `
+      <div style="background: rgba(234, 179, 8, 0.1); border-left: 3px solid #eab308; padding: 10px 14px; border-radius: 6px; font-size: 0.85rem;">
+        <strong>📏 Midface Ratio:</strong> Midface height variance detected relative to ideal compact ratios.
+      </div>`;
+  }
+
   tipsContainer.innerHTML = tipsHTML;
 }
 
-// Scan Math Execution & Supabase Sync
 if (scanBtn) {
   scanBtn.addEventListener('click', async () => {
     if (!latestLandmarks) return;
 
-    // Head Pose Validation Check
-    const pose = checkHeadAlignment(latestLandmarks);
-    if (!pose.isAligned) {
-      alert("Please level your camera and face straight forward. Head tilt or turn detected!");
-    }
-
-    // Midline defined from Top Mid-brow (Glabella: 10) to Chin Center (152)
+    // Facial Midline Vector (Top Mid-brow 10 -> Chin 152)
     const topMidline = latestLandmarks[10];
     const bottomMidline = latestLandmarks[152];
 
-    // Interpupillary Distance (IPD) as invariant reference baseline scale
+    // Reference Scale Baseline: Interpupillary Distance (IPD)
     const ipd = getDistance(latestLandmarks[33], latestLandmarks[263]);
 
-    // Eye Symmetry (Pupil/Canthus distance to axis normalized by IPD)
+    // 1. Eye Symmetry (Outer Canthi)
     const leftEyeDist = getPerpendicularDistance(latestLandmarks[33], topMidline, bottomMidline) / ipd;
     const rightEyeDist = getPerpendicularDistance(latestLandmarks[263], topMidline, bottomMidline) / ipd;
     const eyeScore = convertTo100Scale(calculateSymmetryRatio(leftEyeDist, rightEyeDist));
 
-    // Jaw Symmetry (Jaw Angles 172 vs 397 normalized by IPD)
+    // 2. Jawline Alignment (Jaw Angles 172 vs 397)
     const leftJawDist = getPerpendicularDistance(latestLandmarks[172], topMidline, bottomMidline) / ipd;
     const rightJawDist = getPerpendicularDistance(latestLandmarks[397], topMidline, bottomMidline) / ipd;
     const jawScore = convertTo100Scale(calculateSymmetryRatio(leftJawDist, rightJawDist));
 
-    // Nose Symmetry (Alares 129 vs 358 normalized by IPD)
-    const leftNoseDist = getPerpendicularDistance(latestLandmarks[129], topMidline, bottomMidline) / ipd;
-    const rightNoseDist = getPerpendicularDistance(latestLandmarks[358], topMidline, bottomMidline) / ipd;
-    const noseScore = convertTo100Scale(calculateSymmetryRatio(leftNoseDist, rightNoseDist));
-
-    // Lip Symmetry (Cheilion/Corners 61 vs 291 normalized by IPD)
+    // 3. Lips Proportion (Mouth Corners 61 vs 291)
     const leftLipDist = getPerpendicularDistance(latestLandmarks[61], topMidline, bottomMidline) / ipd;
     const rightLipDist = getPerpendicularDistance(latestLandmarks[291], topMidline, bottomMidline) / ipd;
     const lipScore = convertTo100Scale(calculateSymmetryRatio(leftLipDist, rightLipDist));
 
-    const harmonyScore = Math.round((eyeScore * 0.3) + (jawScore * 0.3) + (noseScore * 0.2) + (lipScore * 0.2));
-    const overallScore = Math.round((harmonyScore + eyeScore + jawScore) / 3);
+    // 4. Nose Balance (Alares 129 vs 358)
+    const leftNoseDist = getPerpendicularDistance(latestLandmarks[129], topMidline, bottomMidline) / ipd;
+    const rightNoseDist = getPerpendicularDistance(latestLandmarks[358], topMidline, bottomMidline) / ipd;
+    const noseScore = convertTo100Scale(calculateSymmetryRatio(leftNoseDist, rightNoseDist));
 
+    // 5. Midface Ratio (Compactness Ratio: Pupil-to-Lip vs IPD)
+    const midfaceHeight = getDistance(latestLandmarks[1], latestLandmarks[13]);
+    const idealRatio = 0.95; // Golden ratio midface compact standard
+    const currentRatio = midfaceHeight / ipd;
+    const midfaceScore = Math.round(100 - (Math.abs(idealRatio - currentRatio) * 100));
+    const clampedMidface = Math.min(99, Math.max(30, midfaceScore));
+
+    // Weighted Overall Score
+    const overallScore = Math.round(
+      (eyeScore * 0.25) + 
+      (jawScore * 0.25) + 
+      (lipScore * 0.20) + 
+      (noseScore * 0.15) + 
+      (clampedMidface * 0.15)
+    );
+
+    // Update UI
     const scoreElem = document.getElementById('score-value');
     const tierElem = document.getElementById('overall-tier');
     if (scoreElem) scoreElem.innerText = overallScore;
     if (tierElem) tierElem.innerText = calculateRank(overallScore);
 
-    updateProgressBar('harmony-bar', 'harmony-score-text', harmonyScore);
     updateProgressBar('eye-bar', 'eye-score-text', eyeScore);
     updateProgressBar('jaw-bar', 'jaw-score-text', jawScore);
-    updateProgressBar('nose-bar', 'nose-score-text', noseScore);
     updateProgressBar('lip-bar', 'lip-score-text', lipScore);
+    updateProgressBar('nose-bar', 'nose-score-text', noseScore);
+    updateProgressBar('midface-bar', 'midface-score-text', clampedMidface);
 
-    generateImprovementTips(harmonyScore, eyeScore, jawScore, noseScore, lipScore);
+    generateImprovementTips(eyeScore, jawScore, lipScore, noseScore, clampedMidface);
 
     if (resultsCard) resultsCard.classList.remove('hidden');
 
@@ -533,5 +520,5 @@ if (scanBtn) {
 
     if (resultsCard) resultsCard.scrollIntoView({ behavior: 'smooth' });
   });
-        }
+}
   
