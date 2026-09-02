@@ -1,97 +1,4 @@
 // ==========================================
-// 0. SUPABASE CLIENT INITIALIZATION
-// ==========================================
-const SUPABASE_URL = 'https://nhngytexcwzutrckgwzw.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_fumZiWoHnBYzFnvn71GnxQ_TYME4LZx';
-const supabase = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
-
-let currentUser = null;
-
-if (supabase) {
-  supabase.auth.onAuthStateChange(async (event, session) => {
-    if (session) {
-      currentUser = session.user;
-      await fetchAndSyncProfile();
-    } else {
-      currentUser = null;
-      loadLocalFallbackProfile();
-    }
-  });
-}
-
-async function fetchAndSyncProfile() {
-  if (!supabase || !currentUser) return;
-
-  const { data, error } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('id', currentUser.id)
-    .single();
-
-  if (error) {
-    console.error('Error fetching Supabase profile:', error.message);
-    return;
-  }
-
-  if (data) {
-    if (usernameInput) usernameInput.value = data.display_name || '';
-    
-    if (avatarDisplay) {
-      if (data.avatar_url && data.avatar_url.startsWith('data:image')) {
-        avatarDisplay.innerHTML = `<img src="${data.avatar_url}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;" alt="Avatar">`;
-      } else {
-        avatarDisplay.innerHTML = data.avatar_url || '🔥';
-      }
-    }
-
-    const bestScore = data.best_score || '--';
-    const totalScans = data.total_scans || 0;
-
-    if (document.getElementById('profile-best-score')) {
-      document.getElementById('profile-best-score').innerText = bestScore !== '--' ? bestScore + '/100' : '--';
-    }
-    if (document.getElementById('profile-total-scans')) {
-      document.getElementById('profile-total-scans').innerText = totalScans;
-    }
-    if (document.getElementById('profile-rank')) {
-      document.getElementById('profile-rank').innerText = calculateRank(bestScore);
-    }
-  }
-}
-
-function loadLocalFallbackProfile() {
-  const savedName = localStorage.getItem('symmrate_username');
-  if (savedName && usernameInput) {
-    usernameInput.value = savedName;
-  }
-
-  const savedAvatar = localStorage.getItem('symmrate_avatar');
-  const avatarType = localStorage.getItem('symmrate_avatar_type');
-
-  if (savedAvatar && avatarDisplay) {
-    if (avatarType === 'image') {
-      avatarDisplay.innerHTML = `<img src="${savedAvatar}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;" alt="Avatar">`;
-      presetBtns.forEach(b => b.classList.remove('active'));
-    } else {
-      avatarDisplay.innerHTML = savedAvatar;
-    }
-  }
-
-  const bestScore = localStorage.getItem('symmrate_best_score') || '--';
-  const totalScans = localStorage.getItem('symmrate_total_scans') || '0';
-
-  if (document.getElementById('profile-best-score')) {
-    document.getElementById('profile-best-score').innerText = bestScore !== '--' ? bestScore + '/100' : '--';
-  }
-  if (document.getElementById('profile-total-scans')) {
-    document.getElementById('profile-total-scans').innerText = totalScans;
-  }
-  if (document.getElementById('profile-rank')) {
-    document.getElementById('profile-rank').innerText = calculateRank(bestScore);
-  }
-}
-
-// ==========================================
 // 1. NAVIGATION & PROFILE CONTROLS
 // ==========================================
 
@@ -138,7 +45,7 @@ presetBtns.forEach(btn => {
   btn.addEventListener('click', () => {
     presetBtns.forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-
+    
     const selectedEmoji = btn.getAttribute('data-avatar');
     avatarDisplay.innerHTML = selectedEmoji;
     localStorage.setItem('symmrate_avatar', selectedEmoji);
@@ -163,28 +70,47 @@ if (avatarInput) {
 }
 
 if (saveProfileBtn) {
-  saveProfileBtn.addEventListener('click', async () => {
-    const nameValue = usernameInput ? usernameInput.value.trim() : '';
-    const avatarValue = localStorage.getItem('symmrate_avatar') || '🔥';
-
-    localStorage.setItem('symmrate_username', nameValue);
-
-    if (supabase && currentUser) {
-      const { error } = await supabase
-        .from('profiles')
-        .update({
-          display_name: nameValue,
-          avatar_url: avatarValue,
-          updated_at: new Date()
-        })
-        .eq('id', currentUser.id);
-
-      if (error) console.error('Error saving profile to Supabase:', error.message);
+  saveProfileBtn.addEventListener('click', () => {
+    if (usernameInput) {
+      localStorage.setItem('symmrate_username', usernameInput.value.trim());
     }
-
-    if (profileModal) profileModal.classList.add('hidden');
+    profileModal.classList.add('hidden');
   });
 }
+
+function loadSavedProfile() {
+  const savedName = localStorage.getItem('symmrate_username');
+  if (savedName && usernameInput) {
+    usernameInput.value = savedName;
+  }
+
+  const savedAvatar = localStorage.getItem('symmrate_avatar');
+  const avatarType = localStorage.getItem('symmrate_avatar_type');
+
+  if (savedAvatar && avatarDisplay) {
+    if (avatarType === 'image') {
+      avatarDisplay.innerHTML = `<img src="${savedAvatar}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;" alt="Avatar">`;
+      presetBtns.forEach(b => b.classList.remove('active'));
+    } else {
+      avatarDisplay.innerHTML = savedAvatar;
+    }
+  }
+
+  const bestScore = localStorage.getItem('symmrate_best_score') || '--';
+  const totalScans = localStorage.getItem('symmrate_total_scans') || '0';
+  
+  if (document.getElementById('profile-best-score')) {
+    document.getElementById('profile-best-score').innerText = bestScore !== '--' ? bestScore + '/100' : '--';
+  }
+  if (document.getElementById('profile-total-scans')) {
+    document.getElementById('profile-total-scans').innerText = totalScans;
+  }
+  if (document.getElementById('profile-rank')) {
+    document.getElementById('profile-rank').innerText = calculateRank(bestScore);
+  }
+}
+
+loadSavedProfile();
 
 function calculateRank(score) {
   if (score === '--') return 'Unranked';
@@ -196,39 +122,13 @@ function calculateRank(score) {
   return 'Sub-Five';
 }
 
-loadLocalFallbackProfile();
-
 // ==========================================
-// 2. AUTHENTICATION (SIGN UP & LOG IN)
-// ==========================================
-
-async function signUpUser(email, password) {
-  if (!supabase) return;
-  const { data, error } = await supabase.auth.signUp({ email, password });
-  if (error) alert('Sign Up Error: ' + error.message);
-  else alert('Account created successfully!');
-}
-
-async function signInUser(email, password) {
-  if (!supabase) return;
-  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-  if (error) alert('Log In Error: ' + error.message);
-  else alert('Logged in successfully!');
-}
-
-async function signOutUser() {
-  if (!supabase) return;
-  await supabase.auth.signOut();
-  alert('Logged out.');
-}
-
-// ==========================================
-// 3. MEDIAPIPE FACE MESH & SCORING ENGINE
+// 2. MEDIAPIPE FACE MESH & SCORING ENGINE
 // ==========================================
 
 const videoElement = document.getElementById('webcam');
 const canvasElement = document.getElementById('overlay');
-const canvasCtx = canvasElement ? canvasElement.getContext('2d') : null;
+const canvasCtx = canvasElement.getContext('2d');
 const startBtn = document.getElementById('start-btn');
 const scanBtn = document.getElementById('scan-btn');
 const cameraPlaceholder = document.getElementById('camera-placeholder');
@@ -249,8 +149,6 @@ faceMesh.setOptions({
 });
 
 faceMesh.onResults((results) => {
-  if (!canvasElement || !videoElement) return;
-
   if (canvasElement.width !== videoElement.videoWidth) {
     canvasElement.width = videoElement.videoWidth;
     canvasElement.height = videoElement.videoHeight;
@@ -261,12 +159,12 @@ faceMesh.onResults((results) => {
 
   if (results.multiFaceLandmarks && results.multiFaceLandmarks.length > 0) {
     latestLandmarks = results.multiFaceLandmarks[0];
-    if (scanBtn) scanBtn.disabled = false;
+    scanBtn.disabled = false;
 
     for (const point of latestLandmarks) {
       const x = point.x * canvasElement.width;
       const y = point.y * canvasElement.height;
-
+      
       canvasCtx.beginPath();
       canvasCtx.arc(x, y, 1.2, 0, 2 * Math.PI);
       canvasCtx.fillStyle = '#3b82f6';
@@ -274,7 +172,7 @@ faceMesh.onResults((results) => {
     }
   } else {
     latestLandmarks = null;
-    if (scanBtn) scanBtn.disabled = true;
+    scanBtn.disabled = true;
   }
   canvasCtx.restore();
 });
@@ -289,10 +187,10 @@ if (startBtn) {
         width: 640,
         height: 480
       });
-
+      
       cameraInstance.start();
       if (cameraPlaceholder) cameraPlaceholder.style.display = 'none';
-      if (videoElement) videoElement.style.display = 'block';
+      videoElement.style.display = 'block';
       startBtn.innerHTML = `<i data-lucide="refresh-cw"></i> Camera Active`;
       if (window.lucide) window.lucide.createIcons();
     } else {
@@ -301,32 +199,8 @@ if (startBtn) {
   });
 }
 
-// 3D Distance Formula
 function getDistance(p1, p2) {
-  const dx = p2.x - p1.x;
-  const dy = p2.y - p1.y;
-  const dz = (p2.z && p1.z) ? (p2.z - p1.z) : 0;
-  return Math.sqrt(dx * dx + dy * dy + dz * dz);
-}
-
-// Perpendicular distance calculation to mid-facial axis (A -> B)
-function getPerpendicularDistance(P, A, B) {
-  const AB = { x: B.x - A.x, y: B.y - A.y, z: (B.z || 0) - (A.z || 0) };
-  const AP = { x: P.x - A.x, y: P.y - A.y, z: (P.z || 0) - (A.z || 0) };
-
-  const abSq = AB.x * AB.x + AB.y * AB.y + AB.z * AB.z;
-  if (abSq === 0) return getDistance(P, A);
-
-  const dot = AP.x * AB.x + AP.y * AB.y + AP.z * AB.z;
-  const t = dot / abSq;
-
-  const proj = {
-    x: A.x + t * AB.x,
-    y: A.y + t * AB.y,
-    z: (A.z || 0) + t * AB.z
-  };
-
-  return getDistance(P, proj);
+  return Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2));
 }
 
 function calculateSymmetryRatio(dist1, dist2) {
@@ -335,51 +209,49 @@ function calculateSymmetryRatio(dist1, dist2) {
   return Math.min(100, Math.max(0, ratio * 100));
 }
 
+// Convert Raw Mesh Ratios to 1-100 Umax Scale
 function convertTo100Scale(rawPercent) {
-  if (rawPercent >= 98) return Math.round(92 + (rawPercent - 98) * 4);
-  if (rawPercent >= 92) return Math.round(80 + (rawPercent - 92) * 2);
-  if (rawPercent >= 85) return Math.round(65 + (rawPercent - 85) * 2.14);
-  if (rawPercent >= 70) return Math.round(40 + (rawPercent - 70) * 1.66);
-  return Math.round(Math.max(10, rawPercent * 0.57));
+  if (rawPercent < 75) return Math.round(rawPercent / 2.5);
+  
+  let score;
+  if (rawPercent < 90) {
+    score = 35 + ((rawPercent - 75) * 1.8);
+  } else if (rawPercent < 96) {
+    score = 62 + ((rawPercent - 90) * 2.8);
+  } else {
+    score = 79 + ((rawPercent - 96) * 4.7);
+  }
+
+  return Math.min(99, Math.max(10, Math.round(score)));
 }
 
-// Update UI Bars and Dynamic Colors
+// Helper to update progress bar width & color tier
 function updateProgressBar(barId, textId, score) {
   const bar = document.getElementById(barId);
   const text = document.getElementById(textId);
-
-  if (text) {
-    text.innerText = `${score}/100`;
-    text.className = 'category-score';
-  }
-
+  
+  if (text) text.innerText = `${score}/100`;
   if (!bar) return;
 
   bar.className = 'progress-bar-fill';
 
-  let colorClass = 'bar-green';
-  let textColorClass = 'text-green';
-
   if (score < 40) {
-    colorClass = 'bar-red';
-    textColorClass = 'text-red';
+    bar.classList.add('bar-red');
   } else if (score < 60) {
-    colorClass = 'bar-orange';
-    textColorClass = 'text-orange';
+    bar.classList.add('bar-orange');
   } else if (score < 80) {
-    colorClass = 'bar-yellow';
-    textColorClass = 'text-yellow';
+    bar.classList.add('bar-yellow');
+  } else {
+    bar.classList.add('bar-green');
   }
-
-  bar.classList.add(colorClass);
-  if (text) text.classList.add(textColorClass);
 
   setTimeout(() => {
     bar.style.width = `${score}%`;
   }, 100);
 }
 
-function generateImprovementTips(eye, jaw, lip, nose, midface) {
+// Actionable Advice Generator
+function generateImprovementTips(harmony, eye, jaw, nose, lip) {
   const tipsContainer = document.getElementById('improvement-tips');
   if (!tipsContainer) return;
 
@@ -409,116 +281,65 @@ function generateImprovementTips(eye, jaw, lip, nose, midface) {
       </div>`;
   }
 
-  if (midface < 65) {
-    tipsHTML += `
-      <div style="background: rgba(234, 179, 8, 0.1); border-left: 3px solid #eab308; padding: 10px 14px; border-radius: 6px; font-size: 0.85rem;">
-        <strong>📏 Midface Ratio:</strong> Midface height variance detected relative to ideal compact ratios.
-      </div>`;
-  }
-
   tipsContainer.innerHTML = tipsHTML;
 }
 
+// Scan Math Execution
 if (scanBtn) {
-  scanBtn.addEventListener('click', async () => {
+  scanBtn.addEventListener('click', () => {
     if (!latestLandmarks) return;
 
-    // Facial Midline Vector (Top Mid-brow 10 -> Chin 152)
-    const topMidline = latestLandmarks[10];
-    const bottomMidline = latestLandmarks[152];
+    const centerPoint = latestLandmarks[6]; // Nose bridge center
 
-    // Reference Scale Baseline: Interpupillary Distance (IPD)
-    const ipd = getDistance(latestLandmarks[33], latestLandmarks[263]);
+    // 1. Eye Area
+    const leftEye = getDistance(centerPoint, latestLandmarks[33]);
+    const rightEye = getDistance(centerPoint, latestLandmarks[263]);
+    const eyeScore = convertTo100Scale(calculateSymmetryRatio(leftEye, rightEye));
 
-    // 1. Eye Symmetry (Outer Canthi)
-    const leftEyeDist = getPerpendicularDistance(latestLandmarks[33], topMidline, bottomMidline) / ipd;
-    const rightEyeDist = getPerpendicularDistance(latestLandmarks[263], topMidline, bottomMidline) / ipd;
-    const eyeScore = convertTo100Scale(calculateSymmetryRatio(leftEyeDist, rightEyeDist));
+    // 2. Jawline Structure
+    const leftJaw = getDistance(centerPoint, latestLandmarks[172]);
+    const rightJaw = getDistance(centerPoint, latestLandmarks[397]);
+    const jawScore = convertTo100Scale(calculateSymmetryRatio(leftJaw, rightJaw));
 
-    // 2. Jawline Alignment (Jaw Angles 172 vs 397)
-    const leftJawDist = getPerpendicularDistance(latestLandmarks[172], topMidline, bottomMidline) / ipd;
-    const rightJawDist = getPerpendicularDistance(latestLandmarks[397], topMidline, bottomMidline) / ipd;
-    const jawScore = convertTo100Scale(calculateSymmetryRatio(leftJawDist, rightJawDist));
+    // 3. Nose Proportions
+    const leftNose = getDistance(centerPoint, latestLandmarks[129]);
+    const rightNose = getDistance(centerPoint, latestLandmarks[358]);
+    const noseScore = convertTo100Scale(calculateSymmetryRatio(leftNose, rightNose));
 
-    // 3. Lips Proportion (Mouth Corners 61 vs 291)
-    const leftLipDist = getPerpendicularDistance(latestLandmarks[61], topMidline, bottomMidline) / ipd;
-    const rightLipDist = getPerpendicularDistance(latestLandmarks[291], topMidline, bottomMidline) / ipd;
-    const lipScore = convertTo100Scale(calculateSymmetryRatio(leftLipDist, rightLipDist));
+    // 4. Lip Proportions
+    const leftLip = getDistance(centerPoint, latestLandmarks[61]);
+    const rightLip = getDistance(centerPoint, latestLandmarks[291]);
+    const lipScore = convertTo100Scale(calculateSymmetryRatio(leftLip, rightLip));
 
-    // 4. Nose Balance (Alares 129 vs 358)
-    const leftNoseDist = getPerpendicularDistance(latestLandmarks[129], topMidline, bottomMidline) / ipd;
-    const rightNoseDist = getPerpendicularDistance(latestLandmarks[358], topMidline, bottomMidline) / ipd;
-    const noseScore = convertTo100Scale(calculateSymmetryRatio(leftNoseDist, rightNoseDist));
+    // 5. Facial Harmony (Weighted combination)
+    const harmonyScore = Math.round((eyeScore * 0.3) + (jawScore * 0.3) + (noseScore * 0.2) + (lipScore * 0.2));
+    const overallScore = Math.round((harmonyScore + eyeScore + jawScore) / 3);
 
-    // 5. Midface Ratio (Compactness Ratio: Pupil-to-Lip vs IPD)
-    const midfaceHeight = getDistance(latestLandmarks[1], latestLandmarks[13]);
-    const idealRatio = 0.95; // Golden ratio midface compact standard
-    const currentRatio = midfaceHeight / ipd;
-    const midfaceScore = Math.round(100 - (Math.abs(idealRatio - currentRatio) * 100));
-    const clampedMidface = Math.min(99, Math.max(30, midfaceScore));
+    // Update Overall Display
+    document.getElementById('score-value').innerText = overallScore;
+    document.getElementById('overall-tier').innerText = calculateRank(overallScore);
 
-    // Weighted Overall Score
-    const overallScore = Math.round(
-      (eyeScore * 0.25) + 
-      (jawScore * 0.25) + 
-      (lipScore * 0.20) + 
-      (noseScore * 0.15) + 
-      (clampedMidface * 0.15)
-    );
-
-    // Update UI
-    const scoreElem = document.getElementById('score-value');
-    const tierElem = document.getElementById('overall-tier');
-    if (scoreElem) scoreElem.innerText = overallScore;
-    if (tierElem) tierElem.innerText = calculateRank(overallScore);
-
+    // Update 5 Dynamic Progress Bars
+    updateProgressBar('harmony-bar', 'harmony-score-text', harmonyScore);
     updateProgressBar('eye-bar', 'eye-score-text', eyeScore);
     updateProgressBar('jaw-bar', 'jaw-score-text', jawScore);
-    updateProgressBar('lip-bar', 'lip-score-text', lipScore);
     updateProgressBar('nose-bar', 'nose-score-text', noseScore);
-    updateProgressBar('midface-bar', 'midface-score-text', clampedMidface);
+    updateProgressBar('lip-bar', 'lip-score-text', lipScore);
 
-    generateImprovementTips(eyeScore, jawScore, lipScore, noseScore, clampedMidface);
+    generateImprovementTips(harmonyScore, eyeScore, jawScore, noseScore, lipScore);
 
     if (resultsCard) resultsCard.classList.remove('hidden');
 
-    // Local Storage Updates
+    // Save Stats
     let totalScans = parseInt(localStorage.getItem('symmrate_total_scans') || '0', 10) + 1;
     localStorage.setItem('symmrate_total_scans', totalScans.toString());
 
     let bestScore = parseInt(localStorage.getItem('symmrate_best_score') || '0', 10);
     if (overallScore > bestScore) {
-      bestScore = overallScore;
-      localStorage.setItem('symmrate_best_score', bestScore.toString());
+      localStorage.setItem('symmrate_best_score', overallScore.toString());
     }
 
-    // Supabase Updates
-    if (supabase && currentUser) {
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('best_score, total_scans')
-        .eq('id', currentUser.id)
-        .single();
-
-      const newBestScore = Math.max(overallScore, profile?.best_score || 0);
-      const newTotalScans = (profile?.total_scans || 0) + 1;
-
-      await supabase
-        .from('profiles')
-        .update({
-          best_score: newBestScore,
-          total_scans: newTotalScans,
-          rank_title: calculateRank(newBestScore),
-          updated_at: new Date()
-        })
-        .eq('id', currentUser.id);
-
-      await fetchAndSyncProfile();
-    } else {
-      loadLocalFallbackProfile();
-    }
-
-    if (resultsCard) resultsCard.scrollIntoView({ behavior: 'smooth' });
+    loadSavedProfile();
+    resultsCard.scrollIntoView({ behavior: 'smooth' });
   });
 }
-  
