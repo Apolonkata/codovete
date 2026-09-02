@@ -5,7 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SYMMRATE - AI Face Symmetry Scanner</title>
   <link rel="stylesheet" href="style.css">
-  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest" defer></script>
+  
+  <!-- Supabase CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
 </head>
 <body>
 
@@ -67,80 +72,33 @@
     </div>
 
     <section id="results" class="results-card hidden">
-      <div class="results-header">
-        <h2>Scan Results</h2>
-        <span class="score-badge" id="overall-tier">Unranked</span>
-      </div>
-
-      <div class="overall-score-card">
-        <div class="score-main">
-          <span class="score-number" id="score-value">--</span>
-          <span class="score-max">/100</span>
-        </div>
+      <h2>Scan Results</h2>
+      <div class="overall-score">
+        <span class="score-number" id="score-value">--</span>
         <span class="score-label">Overall Attractiveness & Symmetry</span>
       </div>
 
-      <!-- Category Progress Bars -->
-      <div class="categories-container">
-        <!-- Eyes Symmetry -->
-        <div class="category-card">
-          <div class="category-header">
-            <span class="category-title">👁️ Eyes Symmetry</span>
-            <span class="category-score" id="eye-score-text">--/100</span>
-          </div>
-          <div class="progress-bar-bg">
-            <div id="eye-bar" class="progress-bar-fill"></div>
-          </div>
+      <div class="metrics-grid">
+        <div class="metric-box">
+          <span class="metric-title">Eyes Symmetry</span>
+          <span class="metric-value" id="eye-score">--</span>
         </div>
-
-        <!-- Jawline Alignment -->
-        <div class="category-card">
-          <div class="category-header">
-            <span class="category-title">🦴 Jawline Alignment</span>
-            <span class="category-score" id="jaw-score-text">--/100</span>
-          </div>
-          <div class="progress-bar-bg">
-            <div id="jaw-bar" class="progress-bar-fill"></div>
-          </div>
+        <div class="metric-box">
+          <span class="metric-title">Jawline Alignment</span>
+          <span class="metric-value" id="jaw-score">--</span>
         </div>
-
-        <!-- Lips Proportion -->
-        <div class="category-card">
-          <div class="category-header">
-            <span class="category-title">👄 Lips Proportion</span>
-            <span class="category-score" id="lip-score-text">--/100</span>
-          </div>
-          <div class="progress-bar-bg">
-            <div id="lip-bar" class="progress-bar-fill"></div>
-          </div>
-        </div>
-
-        <!-- Nose Balance -->
-        <div class="category-card">
-          <div class="category-header">
-            <span class="category-title">👃 Nose Balance</span>
-            <span class="category-score" id="nose-score-text">--/100</span>
-          </div>
-          <div class="progress-bar-bg">
-            <div id="nose-bar" class="progress-bar-fill"></div>
-          </div>
-        </div>
-
-        <!-- Midface Ratio -->
-        <div class="category-card">
-          <div class="category-header">
-            <span class="category-title">📏 Midface Ratio</span>
-            <span class="category-score" id="midface-score-text">--/100</span>
-          </div>
-          <div class="progress-bar-bg">
-            <div id="midface-bar" class="progress-bar-fill"></div>
-          </div>
+        <div class="metric-box">
+          <span class="metric-title">Lips Proportion</span>
+          <span class="metric-value" id="lip-score">--</span>
         </div>
       </div>
 
-      <div class="analysis-card">
-        <h3><i data-lucide="sparkles"></i> AI Improvement Recommendations</h3>
-        <div id="improvement-tips" class="tips-list"></div>
+      <div class="analysis-card" style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1);">
+        <h3 style="font-size: 1.1rem; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+          <i data-lucide="sparkles"></i> AI Improvement Recommendations
+        </h3>
+        <div id="improvement-tips" class="tips-list" style="display: flex; flex-direction: column; gap: 0.75rem; text-align: left; font-size: 0.9rem; opacity: 0.9;">
+        </div>
       </div>
     </section>
   </main>
@@ -202,15 +160,19 @@
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous"></script>
+  <!-- MediaPipe CDN Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous" defer></script>
 
-  <script src="app.js"></script>
+  <!-- App Logic -->
+  <script src="app.js" defer></script>
+
+  <!-- Lucide Icon Renderer -->
   <script>
-    lucide.createIcons();
+    document.addEventListener("DOMContentLoaded", () => {
+      if (window.lucide) lucide.createIcons();
+    });
   </script>
 </body>
-              </html>
-  
-            
+          </html>
+          
