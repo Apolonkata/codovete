@@ -1,178 +1,75 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bg">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SYMMRATE - AI Face Symmetry Scanner</title>
+  <title>Онлайн Магазин</title>
   <link rel="stylesheet" href="style.css">
-  
-  <!-- Lucide Icons -->
-  <script src="https://unpkg.com/lucide@latest" defer></script>
-  
-  <!-- Supabase CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
 </head>
 <body>
 
-  <nav class="navbar">
-    <div class="nav-left">
-      <div class="profile-menu-container">
-        <button id="profile-btn" class="profile-btn" aria-label="User Profile">
-          <i data-lucide="user"></i>
-        </button>
-        <div id="profile-dropdown" class="dropdown-menu hidden">
-          <a href="#" id="menu-profile-link" class="dropdown-item"><i data-lucide="user"></i> Profile</a>
-          <a href="#" class="dropdown-item"><i data-lucide="line-chart"></i> Progress</a>
-          <a href="#" class="dropdown-item"><i data-lucide="trophy"></i> Rank</a>
-        </div>
-      </div>
-    </div>
-
-    <div class="nav-brand">
-      <span class="logo-text">SYMM<strong>RATE</strong></span>
-    </div>
-
-    <div class="nav-right">
-      <button id="theme-toggle" class="theme-btn" aria-label="Toggle Theme">
-        <i data-lucide="sun" id="theme-icon"></i>
-      </button>
-    </div>
-  </nav>
-
-  <header class="hero">
-    <h1>AI Face Symmetry & Proportions</h1>
-    <p>Analyze your facial structure, measure symmetry ratios, and track your progress.</p>
-    
-    <div class="features-list">
-      <div class="feature-item"><i data-lucide="zap"></i> Instant AI Scan</div>
-      <div class="feature-item"><i data-lucide="shield-check"></i> 100% Private (Browser-based)</div>
-      <div class="feature-item"><i data-lucide="scan"></i> 468 Landmark Points</div>
-    </div>
+  <header>
+    <div class="logo">Store<span>Logo</span></div>
+    <nav>
+      <a href="#">Начало</a>
+      <a href="#">Продукти</a>
+      <a href="#">За нас</a>
+      <a href="#">Количка (0)</a>
+    </nav>
   </header>
 
-  <main class="scanner-container">
-    <div class="video-card">
-      <div class="video-wrapper" style="position: relative;">
-        <video id="webcam" autoplay playsinline muted style="width: 100%; height: auto; display: none;"></video>
-        <canvas id="overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></canvas>
-        <div id="camera-placeholder" class="placeholder">
-          <i data-lucide="camera" class="placeholder-icon"></i>
-          <p>Camera is currently off</p>
+  <section class="hero">
+    <h1>Нова колекция 2026</h1>
+    <p>Открийте най-добрите оферти за сезона</p>
+  </section>
+
+  <main class="container">
+    <h2 class="section-title">Популярни продукти</h2>
+    
+    <div class="product-grid">
+      
+      <div class="product-card">
+        <img src="https://via.placeholder.com/300x200" alt="Продукт" class="product-image">
+        <div class="product-info">
+          <h3 class="product-title">Продукт 1</h3>
+          <div class="product-price">49.99 лв.</div>
+          <button class="btn-add-cart">Купи</button>
         </div>
       </div>
 
-      <div class="controls">
-        <button id="start-btn" class="btn btn-secondary">
-          <i data-lucide="video"></i> Start Camera
-        </button>
-        <button id="scan-btn" class="btn btn-primary" disabled>
-          <i data-lucide="scan-face"></i> Scan Face
-        </button>
+      <div class="product-card">
+        <img src="https://via.placeholder.com/300x200" alt="Продукт" class="product-image">
+        <div class="product-info">
+          <h3 class="product-title">Продукт 2</h3>
+          <div class="product-price">89.00 лв.</div>
+          <button class="btn-add-cart">Купи</button>
+        </div>
       </div>
+
+      <div class="product-card">
+        <img src="https://via.placeholder.com/300x200" alt="Продукт" class="product-image">
+        <div class="product-info">
+          <h3 class="product-title">Продукт 3</h3>
+          <div class="product-price">25.50 лв.</div>
+          <button class="btn-add-cart">Купи</button>
+        </div>
+      </div>
+
+      <div class="product-card">
+        <img src="https://via.placeholder.com/300x200" alt="Продукт" class="product-image">
+        <div class="product-info">
+          <h3 class="product-title">Продукт 4</h3>
+          <div class="product-price">110.00 лв.</div>
+          <button class="btn-add-cart">Купи</button>
+        </div>
+      </div>
+
     </div>
-
-    <section id="results" class="results-card hidden">
-      <h2>Scan Results</h2>
-      <div class="overall-score">
-        <span class="score-number" id="score-value">--</span>
-        <span class="score-label">Overall Attractiveness & Symmetry</span>
-      </div>
-
-      <div class="metrics-grid">
-        <div class="metric-box">
-          <span class="metric-title">Eyes Symmetry</span>
-          <span class="metric-value" id="eye-score">--</span>
-        </div>
-        <div class="metric-box">
-          <span class="metric-title">Jawline Alignment</span>
-          <span class="metric-value" id="jaw-score">--</span>
-        </div>
-        <div class="metric-box">
-          <span class="metric-title">Lips Proportion</span>
-          <span class="metric-value" id="lip-score">--</span>
-        </div>
-      </div>
-
-      <div class="analysis-card" style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1);">
-        <h3 style="font-size: 1.1rem; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
-          <i data-lucide="sparkles"></i> AI Improvement Recommendations
-        </h3>
-        <div id="improvement-tips" class="tips-list" style="display: flex; flex-direction: column; gap: 0.75rem; text-align: left; font-size: 0.9rem; opacity: 0.9;">
-        </div>
-      </div>
-    </section>
   </main>
 
-  <div id="profile-modal" class="modal hidden">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2>Profile Settings</h2>
-        <button id="close-profile-btn" class="close-btn">&times;</button>
-      </div>
+  <footer>
+    <p>&copy; 2026 StoreLogo. Всички права са запазени.</p>
+  </footer>
 
-      <div class="modal-body">
-        <div class="profile-avatar-section">
-          <div class="avatar-preview-container">
-            <div id="avatar-display" class="avatar-display">🗿</div>
-            <label for="avatar-upload-input" class="avatar-upload-badge" title="Upload Custom Photo">
-              <i data-lucide="camera"></i>
-            </label>
-            <input type="file" id="avatar-upload-input" accept="image/*" hidden>
-          </div>
-
-          <p class="avatar-hint">Choose a preset or upload your photo</p>
-
-          <div class="avatar-presets">
-            <button class="preset-btn active" data-avatar="🗿">🗿</button>
-            <button class="preset-btn" data-avatar="👑">👑</button>
-            <button class="preset-btn" data-avatar="⚡">⚡</button>
-            <button class="preset-btn" data-avatar="🔥">🔥</button>
-            <button class="preset-btn" data-avatar="💎">💎</button>
-          </div>
-        </div>
-
-        <div class="profile-form">
-          <div class="form-group">
-            <label for="username-input">Display Name</label>
-            <input type="text" id="username-input" class="form-input" value="Symmetry Master" placeholder="Enter username">
-          </div>
-
-          <div class="profile-stats-card">
-            <div class="stat-item">
-              <span class="stat-label">Best Score</span>
-              <span class="stat-value" id="profile-best-score">--</span>
-            </div>
-            <div class="stat-item">
-              <span class="stat-label">Total Scans</span>
-              <span class="stat-value" id="profile-total-scans">0</span>
-            </div>
-            <div class="stat-item">
-              <span class="stat-label">Current Rank</span>
-              <span class="stat-value rank-text" id="profile-rank">Unranked</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="modal-footer">
-        <button id="save-profile-btn" class="btn btn-primary">Save Changes</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- MediaPipe CDN Scripts -->
-  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous" defer></script>
-  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous" defer></script>
-
-  <!-- App Logic -->
-  <script src="app.js" defer></script>
-
-  <!-- Lucide Icon Renderer -->
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      if (window.lucide) lucide.createIcons();
-    });
-  </script>
 </body>
-          </html>
-          
+</html>
