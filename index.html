@@ -3,63 +3,157 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Онлайн Магазин</title>
+  <title>Магазин / Аукцион</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
 
-  <header>
-    <div class="logo">Store<span>Logo</span></div>
-    <nav>
-      <a href="#">Начало</a>
-      <a href="#">Продукти</a>
-      <a href="#">За нас</a>
-      <a href="#">Количка (0)</a>
-    </nav>
+  <div class="top-banner">
+    Използваме "бисквитки", за да предоставяме услугите си. <a href="#">Повече информация</a>
+    <button class="btn-cookie">OK</button>
+  </div>
+
+  <header class="main-header">
+    <div class="header-container">
+      <div class="logo">Store<span>Auction</span></div>
+      
+      <div class="search-bar">
+        <input type="text" placeholder="Търси в артикули...">
+        <button class="search-btn"><i class="fa-solid fa-magnifying-glass"></i></button>
+      </div>
+
+      <div class="header-actions">
+        <a href="#" class="btn-sell"><i class="fa-solid fa-circle-plus"></i> Продай</a>
+        <a href="#" class="nav-link"><i class="fa-solid fa-user"></i> Вход</a>
+        <span class="lang-badge">BG</span>
+      </div>
+    </div>
   </header>
 
-  <section class="hero">
-    <h1>Нова колекция 2026</h1>
-    <p>Открийте най-добрите оферти за сезона</p>
+  <section class="hero-section">
+    <div class="hero-content">
+      <h1>Уникални предмети.<br>Истински колекционери.</h1>
+      <div class="hero-stats">
+        <div><strong>100K+</strong> активни потребители</div>
+        <div><strong>720K+</strong> активни аукциона</div>
+        <div><strong>20+</strong> години заедно</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="categories-section">
+    <div class="container">
+      <div class="categories-grid">
+        <div class="cat-item">
+          <div class="cat-icon"><i class="fa-solid fa-stamp"></i></div>
+          <span>Колекционерство</span>
+          <small>547,656 артикула</small>
+        </div>
+        <div class="cat-item">
+          <div class="cat-icon"><i class="fa-solid fa-stopwatch"></i></div>
+          <span>Бижута, Часовници</span>
+          <small>35,035 артикула</small>
+        </div>
+        <div class="cat-item">
+          <div class="cat-icon"><i class="fa-solid fa-paint-brush"></i></div>
+          <span>Изкуство, Музика</span>
+          <small>27,505 артикула</small>
+        </div>
+        <div class="cat-item">
+          <div class="cat-icon"><i class="fa-solid fa-book"></i></div>
+          <span>Книжарница</span>
+          <small>97,212 артикула</small>
+        </div>
+        <div class="cat-item">
+          <div class="cat-icon"><i class="fa-solid fa-plug"></i></div>
+          <span>Електроника</span>
+          <small>8,573 артикула</small>
+        </div>
+        <div class="cat-item">
+          <div class="cat-icon"><i class="fa-solid fa-house"></i></div>
+          <span>Дом, Градина</span>
+          <small>7,475 артикула</small>
+        </div>
+        <div class="cat-item">
+          <div class="cat-icon"><i class="fa-solid fa-car"></i></div>
+          <span>Авто-Мото-Вело</span>
+          <small>3,271 артикула</small>
+        </div>
+        <div class="cat-item">
+          <div class="cat-icon"><i class="fa-solid fa-futbol"></i></div>
+          <span>Спорт, Развлечения</span>
+          <small>3,852 артикула</small>
+        </div>
+        <div class="cat-item">
+          <div class="cat-icon"><i class="fa-solid fa-shirt"></i></div>
+          <span>Мода, Ооблекло</span>
+          <small>4,052 артикула</small>
+        </div>
+        <div class="cat-item">
+          <div class="cat-icon"><i class="fa-solid fa-child"></i></div>
+          <span>Детски стоки</span>
+          <small>1,402 артикула</small>
+        </div>
+        <div class="cat-item">
+          <div class="cat-icon"><i class="fa-solid fa-gift"></i></div>
+          <span>Сувенири, Подаръци</span>
+          <small>5,897 артикула</small>
+        </div>
+        <div class="cat-item">
+          <div class="cat-icon"><i class="fa-solid fa-folder"></i></div>
+          <span>Други категории</span>
+          <small>2,794 артикула</small>
+        </div>
+      </div>
+    </div>
   </section>
 
   <main class="container">
-    <h2 class="section-title">Популярни продукти</h2>
+    <h2 class="section-title"><i class="fa-solid fa-star"></i> Топ аукциони</h2>
     
     <div class="product-grid">
       
       <div class="product-card">
-        <img src="https://via.placeholder.com/300x200" alt="Продукт" class="product-image">
+        <div class="img-wrapper">
+          <img src="https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=400&q=80" alt="Старинен часовник">
+        </div>
         <div class="product-info">
-          <h3 class="product-title">Продукт 1</h3>
-          <div class="product-price">49.99 лв.</div>
+          <h3 class="product-title">Ретро джобен часовник</h3>
+          <div class="product-price">120.00 лв.</div>
           <button class="btn-add-cart">Купи</button>
         </div>
       </div>
 
       <div class="product-card">
-        <img src="https://via.placeholder.com/300x200" alt="Продукт" class="product-image">
+        <div class="img-wrapper">
+          <img src="https://images.unsplash.com/photo-1610375461246-83df859d849d?auto=format&fit=crop&w=400&q=80" alt="Монета">
+        </div>
         <div class="product-info">
-          <h3 class="product-title">Продукт 2</h3>
-          <div class="product-price">89.00 лв.</div>
+          <h3 class="product-title">Сребърна монета 10 лв 1979</h3>
+          <div class="product-price">85.00 лв.</div>
           <button class="btn-add-cart">Купи</button>
         </div>
       </div>
 
       <div class="product-card">
-        <img src="https://via.placeholder.com/300x200" alt="Продукт" class="product-image">
+        <div class="img-wrapper">
+          <img src="https://images.unsplash.com/photo-1589149098258-3e9102cd63d3?auto=format&fit=crop&w=400&q=80" alt="Нож">
+        </div>
         <div class="product-info">
-          <h3 class="product-title">Продукт 3</h3>
-          <div class="product-price">25.50 лв.</div>
+          <h3 class="product-title">Уникален ръчно изработен нож</h3>
+          <div class="product-price">150.00 лв.</div>
           <button class="btn-add-cart">Купи</button>
         </div>
       </div>
 
       <div class="product-card">
-        <img src="https://via.placeholder.com/300x200" alt="Продукт" class="product-image">
+        <div class="img-wrapper">
+          <img src="https://images.unsplash.com/photo-1524805444758-089113d48a6d?auto=format&fit=crop&w=400&q=80" alt="Ръчен часовник">
+        </div>
         <div class="product-info">
-          <h3 class="product-title">Продукт 4</h3>
-          <div class="product-price">110.00 лв.</div>
+          <h3 class="product-title">Класически часовник</h3>
+          <div class="product-price">210.00 лв.</div>
           <button class="btn-add-cart">Купи</button>
         </div>
       </div>
@@ -68,7 +162,7 @@
   </main>
 
   <footer>
-    <p>&copy; 2026 StoreLogo. Всички права са запазени.</p>
+    <p>&copy; 2026 StoreAuction. Всички права са запазени.</p>
   </footer>
 
 </body>
